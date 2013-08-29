@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'GBFancyCamera' target in the 'GBFancyCamera' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
