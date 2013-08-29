@@ -12,6 +12,30 @@
 		8A20018A17CFAD1C0046E265 /* GBFancyCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A20018917CFAD1C0046E265 /* GBFancyCamera.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		8A20019617CFAD5F0046E265 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCF1A33414DDB1EC00852800;
+			remoteInfo = GPUImage;
+		};
+		8A20019817CFAD5F0046E265 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCF1A34414DDB1EC00852800;
+			remoteInfo = GPUImageTests;
+		};
+		8A20019C17CFAD7E0046E265 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BCF1A33314DDB1EC00852800;
+			remoteInfo = GPUImage;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		8A20017D17CFAD1B0046E265 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -31,6 +55,7 @@
 		8A20018617CFAD1C0046E265 /* GBFancyCamera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GBFancyCamera-Prefix.pch"; sourceTree = "<group>"; };
 		8A20018717CFAD1C0046E265 /* GBFancyCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GBFancyCamera.h; sourceTree = "<group>"; };
 		8A20018917CFAD1C0046E265 /* GBFancyCamera.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GBFancyCamera.m; sourceTree = "<group>"; };
+		8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GPUImage.xcodeproj; path = "../../../Open Source/GPUImage/framework/GPUImage.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,8 +98,8 @@
 		8A20018417CFAD1C0046E265 /* GBFancyCamera */ = {
 			isa = PBXGroup;
 			children = (
-				8A20018717CFAD1C0046E265 /* GBFancyCamera.h */,
-				8A20018917CFAD1C0046E265 /* GBFancyCamera.m */,
+				8A20019A17CFAD6A0046E265 /* Libraries */,
+				8A20019B17CFAD710046E265 /* Code */,
 				8A20018517CFAD1C0046E265 /* Supporting Files */,
 			);
 			path = GBFancyCamera;
@@ -86,6 +111,32 @@
 				8A20018617CFAD1C0046E265 /* GBFancyCamera-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8A20019117CFAD5F0046E265 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8A20019717CFAD5F0046E265 /* libGPUImage.a */,
+				8A20019917CFAD5F0046E265 /* GPUImageTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8A20019A17CFAD6A0046E265 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		8A20019B17CFAD710046E265 /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				8A20018717CFAD1C0046E265 /* GBFancyCamera.h */,
+				8A20018917CFAD1C0046E265 /* GBFancyCamera.m */,
+			);
+			name = Code;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,6 +153,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8A20019D17CFAD7E0046E265 /* PBXTargetDependency */,
 			);
 			name = GBFancyCamera;
 			productName = GBFancyCamera;
@@ -127,12 +179,35 @@
 			mainGroup = 8A20017617CFAD1B0046E265;
 			productRefGroup = 8A20018017CFAD1B0046E265 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 8A20019117CFAD5F0046E265 /* Products */;
+					ProjectRef = 8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8A20017E17CFAD1B0046E265 /* GBFancyCamera */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		8A20019717CFAD5F0046E265 /* libGPUImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGPUImage.a;
+			remoteRef = 8A20019617CFAD5F0046E265 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8A20019917CFAD5F0046E265 /* GPUImageTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = GPUImageTests.octest;
+			remoteRef = 8A20019817CFAD5F0046E265 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8A20017B17CFAD1B0046E265 /* Sources */ = {
@@ -144,6 +219,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8A20019D17CFAD7E0046E265 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = GPUImage;
+			targetProxy = 8A20019C17CFAD7E0046E265 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8A20018B17CFAD1C0046E265 /* Debug */ = {
@@ -170,7 +253,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				HEADER_SEARCH_PATHS = (
+					"../../Open\\ Source/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -193,7 +279,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				HEADER_SEARCH_PATHS = (
+					"../../Open\\ Source/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

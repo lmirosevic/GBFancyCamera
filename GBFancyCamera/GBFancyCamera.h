@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface GBFancyCamera : NSObject
+@interface GBFancyCamera : UIViewController
 
 @end
