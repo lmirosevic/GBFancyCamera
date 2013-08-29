@@ -10,6 +10,11 @@
 		8A20018317CFAD1C0046E265 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A20018217CFAD1B0046E265 /* Foundation.framework */; };
 		8A20018817CFAD1C0046E265 /* GBFancyCamera.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8A20018717CFAD1C0046E265 /* GBFancyCamera.h */; };
 		8A20018A17CFAD1C0046E265 /* GBFancyCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A20018917CFAD1C0046E265 /* GBFancyCamera.m */; };
+		8A2001F117CFB09B0046E265 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F017CFB09B0046E265 /* CoreMedia.framework */; };
+		8A2001F317CFB0A30046E265 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F217CFB0A30046E265 /* CoreVideo.framework */; };
+		8A2001F517CFB0A80046E265 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F417CFB0A80046E265 /* OpenGLES.framework */; };
+		8A2001F717CFB0B00046E265 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F617CFB0B00046E265 /* AVFoundation.framework */; };
+		8A2001F917CFB0B50046E265 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F817CFB0B50046E265 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +61,11 @@
 		8A20018717CFAD1C0046E265 /* GBFancyCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GBFancyCamera.h; sourceTree = "<group>"; };
 		8A20018917CFAD1C0046E265 /* GBFancyCamera.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GBFancyCamera.m; sourceTree = "<group>"; };
 		8A20019017CFAD5F0046E265 /* GPUImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GPUImage.xcodeproj; path = "../../../Open Source/GPUImage/framework/GPUImage.xcodeproj"; sourceTree = "<group>"; };
+		8A2001F017CFB09B0046E265 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		8A2001F217CFB0A30046E265 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		8A2001F417CFB0A80046E265 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		8A2001F617CFB0B00046E265 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		8A2001F817CFB0B50046E265 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +73,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A2001F917CFB0B50046E265 /* QuartzCore.framework in Frameworks */,
+				8A2001F717CFB0B00046E265 /* AVFoundation.framework in Frameworks */,
+				8A2001F517CFB0A80046E265 /* OpenGLES.framework in Frameworks */,
+				8A2001F317CFB0A30046E265 /* CoreVideo.framework in Frameworks */,
+				8A2001F117CFB09B0046E265 /* CoreMedia.framework in Frameworks */,
 				8A20018317CFAD1C0046E265 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -73,6 +88,11 @@
 		8A20017617CFAD1B0046E265 = {
 			isa = PBXGroup;
 			children = (
+				8A2001F817CFB0B50046E265 /* QuartzCore.framework */,
+				8A2001F617CFB0B00046E265 /* AVFoundation.framework */,
+				8A2001F417CFB0A80046E265 /* OpenGLES.framework */,
+				8A2001F217CFB0A30046E265 /* CoreVideo.framework */,
+				8A2001F017CFB09B0046E265 /* CoreMedia.framework */,
 				8A20018417CFAD1C0046E265 /* GBFancyCamera */,
 				8A20018117CFAD1B0046E265 /* Frameworks */,
 				8A20018017CFAD1B0046E265 /* Products */,
@@ -331,6 +351,7 @@
 				8A20018F17CFAD1C0046E265 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
