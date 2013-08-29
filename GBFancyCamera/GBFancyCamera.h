@@ -10,4 +10,6 @@
 
 @interface GBFancyCamera : UIViewController
 
++(GBFancyCamera *)sharedCamera;
+
 @end

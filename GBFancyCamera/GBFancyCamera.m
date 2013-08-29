@@ -27,6 +27,19 @@ typedef enum {
 
 @implementation GBFancyCamera
 
+#pragma mark - Memory
+
++(GBFancyCamera *)sharedCamera {
+    static GBFancyCamera *_sharedCamera;
+    @synchronized(self) {
+        if (!_sharedCamera) {
+            _sharedCamera = [self new];
+        }
+    }
+    
+    return _sharedCamera;
+}
+
 #pragma mark - CA
 
 -(void)setState:(GBFancyCameraState)state {
