@@ -48,28 +48,43 @@ typedef enum {
 
 #pragma mark - Life
 
+//foo needs to handle case where there is no camera (e.g. simulator)
+
 -(void)viewDidLoad {
     [super viewDidLoad];
 
+    //full screen stuff
+    self.view.backgroundColor = [UIColor blackColor];
+    self.wantsFullScreenLayout = YES;
+    
     //set up camera stuff
-    self.stillCamera = [[GPUImageStillCamera alloc] init];
-    GPUImageView *filterView = [[GPUImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x,
+    self.stillCamera = [[GPUImageStillCamera alloc] init];//perhaps init this sooner so loading is faster
+    GPUImageSepiaFilter *sepia = [GPUImageSepiaFilter new];
+//    GPUImageGammaFilter *filter = [[GPUImageGammaFilter alloc] init];
+    GPUImageView *targetView = [[GPUImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x,
                                                                               self.view.bounds.origin.y,
                                                                               self.view.bounds.size.width,
                                                                               self.view.bounds.size.height - kBottomBarHeight)];
-    GPUImageGammaFilter *filter = [[GPUImageGammaFilter alloc] init];
-    
+    targetView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    targetView.autoresizesSubviews = YES;
     
     self.stillCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
-    [self.stillCamera addTarget:filter];
-    [filter addTarget:filterView];
-    [self.view addSubview:filterView];
+    targetView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
+
+    [self.stillCamera addTarget:sepia];
+    [sepia addTarget:targetView];
+//    [self.stillCamera addTarget:filter];
+//    [filter addTarget:targetView];
+    [self.view addSubview:targetView];
     
     //add controls
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    //hide the status bar
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     
     //turn on the camera
     [self.stillCamera startCameraCapture];
@@ -81,6 +96,14 @@ typedef enum {
     [super viewDidAppear:animated];
     
     //animate the shutter away
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    //show the status bar, but only if it was previously shown
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+    
 }
 
 -(void)viewDidDisappear:(BOOL)animated {
