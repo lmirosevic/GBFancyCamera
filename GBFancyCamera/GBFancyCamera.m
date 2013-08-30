@@ -10,7 +10,25 @@
 
 #import "GPUImage.h"
 
-static CGFloat const kBottomBarHeight =                     80;
+static CGFloat const kBottomBarHeight =                             80;
+static CGFloat const kBottomBarBackroundHeight =                    0;
+static CGFloat const kBarArrowImageBottomCenterOffset =             0;
+static CGFloat const kBarButtonsBottomCenterOffset =                0;
+static CGFloat const kMainButtonBottomCenterOffset =                0;
+static CGFloat const kMainButtonAcceptModeRightCenterOffset =       0;
+static CGFloat const kRetakeButtonRightCenterOffset =               0;
+static CGFloat const kCancelButtonLeftCenterOffset =                0;
+static CGFloat const kCameraRollButtonRightCenterOffset =           0;
+static UIEdgeInsets const kScrollViewPadding =                      (UIEdgeInsets){0, 0, 0, 0};
+
+static CGSize const kThumbnailBoxSize =                             (CGSize){0, 0};
+static CGFloat const kThumbnailBoxTopMargin =                       0;
+static CGFloat const kThumbnailBoxSideMargin =                      0;
+
+static CGSize const kThumbnailImageSize =                           (CGSize){0, 0};
+static CGFloat const kThumbnailImageTopMargin =                     0;
+static CGFloat const kThumbnailImageCornerRadius =                  0;
+
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -19,13 +37,28 @@ typedef enum {
 
 @interface GBFancyCamera ()
 
-@property (assign, nonatomic) GBFancyCameraState            state;
+@property (assign, nonatomic) GBFancyCameraState                    state;
 
-@property (strong, nonatomic) GPUImageStillCamera           *stillCamera;
+@property (strong, nonatomic) GPUImageStillCamera                   *stillCamera;
+
+@property (strong, nonatomic) UIView                                *barContainerView;
+@property (strong, nonatomic) UIImageView                           *barbackgroundImageView;
+@property (strong, nonatomic) UIImageView                           *barArrowImageView;
+
+@property (strong, nonatomic) UIButton                              *mainButton;
+@property (strong, nonatomic) UIButton                              *cancelButton;
+@property (strong, nonatomic) UIButton                              *cameraRollButton;
+@property (strong, nonatomic) UIButton                              *retakeButton;
+
+@property (strong, nonatomic) UIView                                *filtersContainerView;
+@property (strong, nonatomic) UIImageView                           *meshTrayImageView;
+@property (strong, nonatomic) UIScrollView                          *filtersScrollView;
 
 @end
 
 @implementation GBFancyCamera
+
+//foo tapping a filter thumb should scroll to him
 
 #pragma mark - Memory
 
