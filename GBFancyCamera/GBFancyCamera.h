@@ -15,7 +15,7 @@ typedef enum {
 } GBFancyCameraSource;
 
 typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *processedImage, BOOL didTakePhoto, GBFancyCameraSource source, BOOL *shouldAutoDismiss);
-#define GBUnlimitedResolution CGFLOAT_MAX
+#define GBUnlimitedImageResolution CGFLOAT_MAX
 
 @protocol GBFanceCameraDelegate;
 

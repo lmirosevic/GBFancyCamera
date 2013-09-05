@@ -52,6 +52,7 @@ static CGFloat const kFilterNameTopCenterMargin =                   63;
 static CGSize const kBarHeadingShadowOffset =                       (CGSize){0, 1};
 
 static BOOL const kDefaultShouldAutoDismiss =                       YES;
+static CGFloat const kDefaultOutputImageResolution =                GBUnlimitedImageResolution;
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -110,7 +111,7 @@ typedef enum {
 
 -(id)init {
     if (self = [super init]) {
-
+        self.outputImageResolution = kDefaultOutputImageResolution;
     }
     
     return self;
@@ -263,7 +264,7 @@ typedef enum {
     [self.filtersContainerView addSubview:self.filtersScrollView];
     
     //handles opacities, positions, etc
-    [self _transitionToState:GBFancyCameraStateCapturing animated:NO];
+    [self _transitionToState:GBFancyCameraStateCapturing animated:NO forced:YES];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -385,9 +386,36 @@ typedef enum {
 }
 
 -(void)_transitionToState:(GBFancyCameraState)state animated:(BOOL)animated {
-    if (_state != state) {
+    [self _transitionToState:state animated:animated forced:NO];
+}
+
+-(void)_transitionToState:(GBFancyCameraState)state animated:(BOOL)animated forced:(BOOL)forced {
+    if (_state != state || forced) {
         //do the animation to move around buttons and stuff
-        
+        switch (state) {
+            case GBFancyCameraStateCapturing: {
+                NSArray *array = @[UIViewController.class, UIView.class];
+                //main button
+                [self.mainButton setImage:[UIImage imageNamed:@"snap-button-camera"] forState:UIControlStateNormal];
+                
+                //retake button
+                self.retakeButton.alpha = 0;
+                
+                //filters
+                self.filtersContainerView.frame = CGRectMake(0,
+                                                             self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetClosed,
+                                                             self.filtersContainerView.frame.size.height,
+                                                             self.filtersContainerView.frame.size.width);
+            } break;
+                
+            case GBFancyCameraStateFilters: {
+                //filters
+                self.filtersContainerView.frame = CGRectMake(0,
+                                                             self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetOpen,
+                                                             self.filtersContainerView.frame.size.height,
+                                                             self.filtersContainerView.frame.size.width);
+            } break;
+        }
         
         //remember state
         _state = state;
