@@ -39,8 +39,7 @@
     
     _outputSize = outputSize;
     
-//    [self forceProcessingAtSizeRespectingAspectRatio:outputSize];
-    [self forceProcessingAtSizeRespectingAspectRatio:CGSizeMake(410,730)];
+    [self forceProcessingAtSizeRespectingAspectRatio:outputSize];
 }
 
 #pragma mark - mem

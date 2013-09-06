@@ -171,38 +171,25 @@ typedef enum {
     self.wantsFullScreenLayout = YES;
     
     //set up camera stuff
-    self.stillCamera = [[GPUImageStillCamera alloc] init];//perhaps init this sooner so loading is faster
-//    GPUImageSepiaFilter *sepia = [GPUImageSepiaFilter new];
-//    GPUImageGammaFilter *filter = [[GPUImageGammaFilter alloc] init];
-    GPUImageView *targetView = [[GPUImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
+    self.stillCamera = [[GPUImageStillCamera alloc] init];
+    GPUImageView *previewView = [[GPUImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
                                                                               self.view.bounds.origin.y + kCameraViewportPadding.top,
                                                                               self.view.bounds.size.width - (kCameraViewportPadding.left + kCameraViewportPadding.right),
                                                                               self.view.bounds.size.height - (kCameraViewportPadding.top + kCameraViewportPadding.bottom))];
-    targetView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    targetView.autoresizesSubviews = YES;
+    previewView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    previewView.autoresizesSubviews = YES;
     
-    targetView.fillMode = kGPUImageFillModePreserveAspectRatio;
-//    targetView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
+    previewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
     self.stillCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
-
-//    [self.stillCamera addTarget:sepia];
-//    [sepia addTarget:targetView];
-    [self.stillCamera addTarget:self.resizerThumbnail];
-    [self.stillCamera addTarget:self.resizerMain];
     
     GPUImageFilter *passtru = [GPUImageFilter new];
-    
-    GPUImageLanczosResamplingFilter *resizer = [[GPUImageLanczosResamplingFilter alloc] init];
-    [resizer forceProcessingAtSizeRespectingAspectRatio:CGSizeMake(200, 200)];
-    
+
     [self.stillCamera addTarget:passtru];
-    [passtru addTarget:resizer];
-    [resizer addTarget:targetView];
+    [passtru addTarget:self.resizerThumbnail];
+    [passtru addTarget:self.resizerMain];
+    [self.resizerMain addTarget:previewView];
     
-//    [self.resizerMain addTarget:targetView];//foo
-//    [self.stillCamera addTarget:filter];
-//    [filter addTarget:targetView];
-    [self.view addSubview:targetView];
+    [self.view addSubview:previewView];
     
     /* Controls */
     
