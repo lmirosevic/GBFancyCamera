@@ -230,38 +230,34 @@ typedef enum {
 
 @interface GBFancyCamera () <GBFilterViewDelegate>
 
-@property (assign, nonatomic) GBFancyCameraState                    state;
+@property (assign, nonatomic) GBFancyCameraState                                                state;
 
-@property (strong, nonatomic) GPUImageStillCamera                   *stillCamera;
+@property (strong, nonatomic) GPUImageStillCamera                                               *stillCamera;
 
-@property (strong, nonatomic) UIView                                *barContainerView;
-@property (strong, nonatomic) UIImageView                           *barBackgroundImageView;
+@property (strong, nonatomic) UIView                                                            *barContainerView;
+@property (strong, nonatomic) UIImageView                                                       *barBackgroundImageView;
 
-@property (strong, nonatomic) UIButton                              *mainButton;
-@property (strong, nonatomic) UIButton                              *cancelButton;
-@property (strong, nonatomic) UIButton                              *cameraRollButton;
-@property (strong, nonatomic) UIButton                              *retakeButton;
+@property (strong, nonatomic) UIButton                                                          *mainButton;
+@property (strong, nonatomic) UIButton                                                          *cancelButton;
+@property (strong, nonatomic) UIButton                                                          *cameraRollButton;
+@property (strong, nonatomic) UIButton                                                          *retakeButton;
 
-@property (strong, nonatomic) UIView                                *filtersContainerView;
-@property (strong, nonatomic) UIImageView                           *filtersBackgroundImageView;
-@property (strong, nonatomic) UIScrollView                          *filtersScrollView;
+@property (strong, nonatomic) UIView                                                            *filtersContainerView;
+@property (strong, nonatomic) UIImageView                                                       *filtersBackgroundImageView;
+@property (strong, nonatomic) UIScrollView                                                      *filtersScrollView;
 
-@property (strong, nonatomic) UILabel                               *barHeadingLabel;
+@property (strong, nonatomic) UILabel                                                           *barHeadingLabel;
 
-@property (strong, nonatomic) NSMutableArray                        *filterViews;
+@property (strong, nonatomic) NSMutableArray                                                    *filterViews;
 
-@property (assign, nonatomic) BOOL                                  isPresented;
-@property (copy, nonatomic) GBFancyCameraCompletionBlock            completionBlock;
-@property (strong, nonatomic) UIImage                               *originalImage;
-@property (strong, nonatomic) UIImage                               *originalImageThumbnailSize;
-@property (strong, nonatomic) GBResizeFilter                        *resizerThumbnail;
-@property (strong, nonatomic) GBResizeFilter                        *resizerMain;
-@property (strong, nonatomic) GPUImageFilter                        *passthroughFilter;
-@property (strong, nonatomic) GPUImageView                          *livePreviewView;
+@property (assign, nonatomic) BOOL                                                              isPresented;
+@property (copy, nonatomic) GBFancyCameraCompletionBlock                                        completionBlock;
+@property (strong, nonatomic) UIImage                                                           *originalImage;
+@property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
+@property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
+@property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
 @property (strong, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>        *currentFilter;
-
-@property (weak, nonatomic) GPUImageFilter                          *liveEgressThumbs;
-@property (weak, nonatomic) GPUImageFilter                          *liveEgressMain;
+@property (weak, nonatomic) GPUImageFilter                                                      *liveEgressMain;
 
 @end
 
@@ -315,14 +311,6 @@ typedef enum {
     _filters = myFilters;
 }
 
--(GBResizeFilter *)resizerThumbnail {
-    if (!_resizerThumbnail) {
-        _resizerThumbnail = [[GBResizeFilter alloc] initWithOutputSize:CGSizeMake(kThumbnailImageSize.width * 2, kThumbnailImageSize.height * 2)];//foo hack
-    }
-    
-    return _resizerThumbnail;
-}
-
 -(GBResizeFilter *)resizerMain {
     if (!_resizerMain) {
         _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:self.outputImageResolution aspectRatio:kCameraAspectRatio];
@@ -360,11 +348,8 @@ typedef enum {
     [self.stillCamera addTarget:self.passthroughFilter];
     [self.passthroughFilter addTarget:self.resizerMain];
     
-    [self.passthroughFilter addTarget:self.resizerThumbnail];
-    
     //filters then get plugged into these ones
     self.liveEgressMain = self.resizerMain;
-//    self.liveEgressThumbs = self.resizerThumbnail;
     
     [self.liveEgressMain addTarget:self.livePreviewView];
     
@@ -561,11 +546,14 @@ typedef enum {
 }
 
 -(void)_retake {
+    //cleanup heavy
     [self _cleanupHeavyStuff];
-//    [self _connectMainFilter:nil];
     
+    //reconnect live feed
+    [self.liveEgressMain addTarget:self.livePreviewView];
+    
+    //continue capturing
     [self.stillCamera resumeCameraCapture];
-//    [self.stillCamera startCameraCapture];
     
     [self _transitionUIToState:GBFancyCameraStateCapturing animated:YES];
 }
@@ -638,30 +626,7 @@ typedef enum {
     //select the first one initially
     GBFilterView *firstFilterView = self.filterViews[0];
     firstFilterView.isSelected = YES;
-//    [self _connectMainFilter:firstFilterView.filter.class];
 }
-
-//-(void)_connectMainFilter:(Class)filterClass {
-//    //disconnect old one
-//    [self.currentFilter removeAllTargets];
-//    [self.liveEgressMain removeTarget:self.currentFilter];
-//
-//    GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject;
-//    if (filterClass) {
-//        //create new one and hook it up
-//        filterObject = [filterClass new];
-//        [self.liveEgressMain addTarget:filterObject];
-//        [filterObject addTarget:self.livePreviewView];
-//    }
-//    else {
-//        //direct connection
-//        filterObject = nil;
-//        [self.liveEgressMain addTarget:self.livePreviewView];
-//    }
-//    
-//    //remember
-//    self.currentFilter = filterObject;
-//}
 
 -(void)_destroyFilterViews {
     for (GBFilterView *aFilterView in self.filterViews) {
@@ -770,7 +735,9 @@ typedef enum {
 -(void)_cleanupHeavyStuff {
     //ditch all hight memory stuff
     self.originalImage = nil;
-    self.originalImageThumbnailSize = nil;
+    
+    [self.currentFilter removeAllTargets];
+    self.currentFilter = nil;
 
     [self _destroyFilterViews];
 }
@@ -789,12 +756,11 @@ typedef enum {
     GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterView.filterClass new];
     self.currentFilter = filterObject;
     [self.liveEgressMain removeAllTargets];
-    [self.liveEgressMain addTarget:filterObject];
-    [filterObject addTarget:self.livePreviewView];
-    [filterObject prepareForImageCapture];//foo
-
     
-//    [self _connectMainFilter:filterView.filter.class];
+    GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
+    [pic addTarget:filterObject];
+    [filterObject addTarget:self.livePreviewView];
+    [pic processImage];
 }
 
 #pragma mark - Actions
