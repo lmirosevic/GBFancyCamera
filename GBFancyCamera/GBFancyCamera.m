@@ -357,7 +357,7 @@ typedef enum {
     self.livePreviewView = [[GPUImageView alloc] initWithFrame:viewPortFrame];
     self.livePreviewView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
-    self.imagePreviewImageView = [[UIImageView alloc] initWithFrame:viewPortFrame];
+    self.imagePreviewImageView = [[UIImageView alloc] initWithFrame:CGRectMake(viewPortFrame.origin.x, viewPortFrame.origin.y + 20, viewPortFrame.size.width, viewPortFrame.size.height - 40)];//foo restore
     self.imagePreviewImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
@@ -591,8 +591,8 @@ typedef enum {
     [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
         self.originalImage = processedImage;
     
-        [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-            self.originalImageThumbnailSize = processedImage;
+        [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImageThumb, NSError *error) {
+            self.originalImageThumbnailSize = processedImageThumb;
             
             //create thumbnails
             [self _createFilterViews];
@@ -768,7 +768,10 @@ typedef enum {
 }
 
 -(void)_previewWithFilter:(GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol> *)filter {
-    self.imagePreviewImageView.image = [filter imageByFilteringImage:self.originalImage];
+    NSLog(@"%@", filter);
+    UIImage *newImage = [filter imageByFilteringImage:self.originalImage];
+    NSLog(@"newimage: %@", newImage);
+    self.imagePreviewImageView.image = newImage;
 }
 
 #pragma mark - GBFilterViewDelegate
