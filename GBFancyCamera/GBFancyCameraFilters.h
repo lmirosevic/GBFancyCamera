@@ -7,3 +7,5 @@
 //
 
 #import "GBResizeFilter.h"
+#import "GBMissEtikateFilter.h"
+#import "GBAmatorkaFilter.h"

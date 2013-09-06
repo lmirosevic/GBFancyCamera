@@ -10,7 +10,7 @@
 
 @interface GBResizeFilter ()
 
-@property (assign, nonatomic)       CGFloat aspectRatio;
+@property (assign, nonatomic) CGFloat               aspectRatio;
 
 @end
 
@@ -40,6 +40,12 @@
     _outputSize = outputSize;
     
     [self forceProcessingAtSizeRespectingAspectRatio:outputSize];
+}
+
+#pragma mark - GBFancyCameraFilterProtocol
+
+-(NSString *)localisedName {
+    return NSLocalizedString(@"Resizer", @"filter name");
 }
 
 #pragma mark - mem

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "GBFancyCameraFilters.h"
+#import "GBFancyCameraFilterProtocol.h"
 
 typedef enum {
     GBFancyCameraSourceNone,
@@ -26,7 +27,7 @@ typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *pro
 //if you set a delegate, he will be notified when a pic is taken or when taking is cancelled
 @property (weak, nonatomic) id<GBFanceCameraDelegate>       delegate;
 
-//set to an array of classes whose instances conform to GBFancyCameraFilterProtocol
+//set to an array of filter objects that inherit from GPUImageFilter and that conform to GBFancyCameraFilterProtocol
 @property (strong, nonatomic) NSArray                       *filters;
 
 //resize the output image
@@ -47,12 +48,5 @@ typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *pro
 
 -(void)fancyCamera:(GBFancyCamera *)fancyCamera didTakePhotoWithOriginalImage:(UIImage *)originalImage processedImage:(UIImage *)processedImage fromSource:(GBFancyCameraSource)source;
 -(void)fancyCameraDidCancelTakingPhoto:(GBFancyCamera *)fancyCamera;
-
-@end
-
-@protocol GBFancyCameraFilterProtocol <NSObject>
-@required
-
--(UIImage *)filteredImagedForImage:(UIImage *)originalImagae;
 
 @end

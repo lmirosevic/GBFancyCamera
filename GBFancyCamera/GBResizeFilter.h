@@ -8,9 +8,11 @@
 
 #import "GPUImageFilter.h"
 
+#import "GBFancyCameraFilterProtocol.h"
+
 #define GBResizeFilterUnlimitedResolution CGFLOAT_MAX
 
-@interface GBResizeFilter : GPUImageFilter
+@interface GBResizeFilter : GPUImageFilter <GBFancyCameraFilterProtocol>
 
 @property (assign, nonatomic) CGFloat       outputResolution;
 @property (assign, nonatomic) CGSize        outputSize;
