@@ -73,20 +73,20 @@ typedef enum {
 
 @interface GBFilterView : UIView
 
-@property (weak, nonatomic) id<GBFilterViewDelegate>                delegate;
-@property (strong, nonatomic) UIImage                               *image;
-@property (copy, nonatomic) NSString                                *title;
-@property (assign, nonatomic) BOOL                                  isSelected;
-@property (weak, nonatomic) GPUImageOutput<GPUImageInput>           *filter;
+@property (weak, nonatomic) id<GBFilterViewDelegate>                                        delegate;
+@property (strong, nonatomic) UIImage                                                       *image;
+@property (copy, nonatomic) NSString                                                        *title;
+@property (assign, nonatomic) BOOL                                                          isSelected;
+@property (weak, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>      *filter;
 
-@property (strong, nonatomic) UIImage                               *backgroundImageWhenSelected;
-@property (strong, nonatomic) UIImage                               *backgroundImageWhenDeselected;
+@property (strong, nonatomic) UIImage                                                       *backgroundImageWhenSelected;
+@property (strong, nonatomic) UIImage                                                       *backgroundImageWhenDeselected;
 
-@property (strong, nonatomic) UIImageView                           *backgroundImageView;
-@property (strong, nonatomic) UIImageView                           *imageView;
-@property (strong, nonatomic) UILabel                               *titleLabel;
+@property (strong, nonatomic) UIImageView                                                   *backgroundImageView;
+@property (strong, nonatomic) UIImageView                                                   *imageView;
+@property (strong, nonatomic) UILabel                                                       *titleLabel;
 
-@property (strong, nonatomic) UITapGestureRecognizer                *tapGestureRecognizer;
+@property (strong, nonatomic) UITapGestureRecognizer                                        *tapGestureRecognizer;
 
 @end
 
@@ -254,13 +254,11 @@ typedef enum {
 @property (copy, nonatomic) GBFancyCameraCompletionBlock            completionBlock;
 @property (strong, nonatomic) UIImage                               *originalImage;
 @property (strong, nonatomic) UIImage                               *originalImageThumbnailSize;
-@property (strong, nonatomic) UIImage                               *processedImage;
 @property (strong, nonatomic) GBResizeFilter                        *resizerThumbnail;
 @property (strong, nonatomic) GBResizeFilter                        *resizerMain;
 @property (strong, nonatomic) GPUImageFilter                        *passthroughFilter;
 @property (strong, nonatomic) GPUImageView                          *livePreviewView;
 @property (strong, nonatomic) UIImageView                           *imagePreviewImageView;
-@property (strong, nonatomic) GPUImageOutput<GPUImageInput>         *activeFilter;
 
 @property (weak, nonatomic) GPUImageFilter                          *liveEgressThumbs;
 @property (weak, nonatomic) GPUImageFilter                          *liveEgressMain;
@@ -340,16 +338,6 @@ typedef enum {
     [self _transitionUIToState:state animated:NO];
 }
 
--(UIImage *)processedImage {
-    //if we didn't do any processing, just return the original
-    if (_processedImage) {
-        return _processedImage;
-    }
-    else {
-        return self.originalImage;
-    }
-}
-
 #pragma mark - Life
 
 -(void)viewDidLoad {
@@ -384,8 +372,7 @@ typedef enum {
     self.liveEgressMain = self.resizerMain;
     self.liveEgressThumbs = self.resizerThumbnail;
     
-    //connects the chain
-    self.activeFilter = nil;
+    [self.liveEgressMain addTarget:self.livePreviewView];
     
     [self.view addSubview:self.livePreviewView];
     
@@ -580,8 +567,9 @@ typedef enum {
 }
 
 -(void)_retake {
-    self.activeFilter = nil;
+    [self.stillCamera resumeCameraCapture];
     [self.stillCamera startCameraCapture];
+    
     [self _transitionUIToState:GBFancyCameraStateCapturing animated:YES];
 }
 
@@ -600,16 +588,21 @@ typedef enum {
     [self.stillCamera pauseCameraCapture];
     
     //take photo
-    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-        self.originalImageThumbnailSize = processedImage;
+    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+        self.originalImage = processedImage;
     
-        //create thumbnails
-        [self _createFilterViews];
-        
-        //transition state
-        [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
-        
-        self.mainButton.enabled = YES;
+        [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+            self.originalImageThumbnailSize = processedImage;
+            
+            //create thumbnails
+            [self _createFilterViews];
+            
+            //transition state
+            [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
+            
+            self.mainButton.enabled = YES;
+
+        }];
     }];
 }
 
@@ -650,8 +643,8 @@ typedef enum {
     
     //select the first one initially
     GBFilterView *firstFilterView = self.filterViews[0];
-    self.activeFilter = firstFilterView.filter;
     firstFilterView.isSelected = YES;
+    [self _previewWithFilter:firstFilterView.filter];
 }
 
 -(void)_destroyFilterViews {
@@ -659,29 +652,6 @@ typedef enum {
         [aFilterView removeFromSuperview];
     }
     self.filterViews = nil;
-}
-
--(void)setActiveFilter:(GPUImageOutput<GPUImageInput> *)filter {
-    //disconnect old filter
-    [self.liveEgressMain removeAllTargets];
-    [_activeFilter removeAllTargets];
-    
-    if (filter) {
-        //connect new filter
-        [self.liveEgressMain addTarget:filter];
-        [filter addTarget:self.livePreviewView];
-
-        //refresh the size stuff
-//        [filter forceProcessingAtSizeRespectingAspectRatio:CGSizeMake(800, 800)];
-    }
-    else {
-        //conect output directly
-        [self.liveEgressMain addTarget:self.livePreviewView];
-    }
-    
-    [self.stillCamera resumeCameraCapture];
-    
-    _activeFilter = filter;
 }
 
 -(void)_returnControlCancelled:(BOOL)cancelled {
@@ -725,6 +695,10 @@ typedef enum {
         switch (state) {
             case GBFancyCameraStateCapturing: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //views
+                    self.livePreviewView.hidden = NO;
+                    self.imagePreviewImageView.hidden = YES;
+                    
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-camera"] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
@@ -750,6 +724,10 @@ typedef enum {
                 
             case GBFancyCameraStateFilters: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //views
+                    self.livePreviewView.hidden = YES;
+                    self.imagePreviewImageView.hidden = NO;
+                    
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-tick"] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
@@ -784,10 +762,13 @@ typedef enum {
 -(void)_cleanupHeavyStuff {
     //ditch all hight memory stuff
     self.originalImage = nil;
-    self.processedImage = nil;
+    self.originalImageThumbnailSize = nil;
 
-    self.activeFilter = nil;//reconnects the view directly
     [self _destroyFilterViews];
+}
+
+-(void)_previewWithFilter:(GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol> *)filter {
+    self.imagePreviewImageView.image = [filter imageByFilteringImage:self.originalImage];
 }
 
 #pragma mark - GBFilterViewDelegate
@@ -799,9 +780,10 @@ typedef enum {
             anotherFilterView.isSelected = NO;
         }
     }
+
     
     //change the currently displayed image to something else
-    self.activeFilter = filterView.filter;
+    [self _previewWithFilter:filterView.filter];
 }
 
 #pragma mark - Actions
