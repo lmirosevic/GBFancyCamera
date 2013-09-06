@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-#import "GPUImageFilter.h"
+#import "GPUImage.h"
 
 #import "GBFancyCameraFilterProtocol.h"
 
 #define GBResizeFilterUnlimitedResolution CGFLOAT_MAX
 
-@interface GBResizeFilter : GPUImageFilter <GBFancyCameraFilterProtocol>
+@interface GBResizeFilter : GPUImageLanczosResamplingFilter <GBFancyCameraFilterProtocol>
 
 @property (assign, nonatomic) CGFloat       outputResolution;
 @property (assign, nonatomic) CGSize        outputSize;

@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
+#import "GBNoFilter.h"
 #import "GBResizeFilter.h"
 #import "GBMissEtikateFilter.h"
 #import "GBAmatorkaFilter.h"
+#import "GBSepiaFilter.h"

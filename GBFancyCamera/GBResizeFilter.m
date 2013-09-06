@@ -52,6 +52,8 @@
 
 -(id)initWithOutputResolution:(CGFloat)resolution aspectRatio:(CGFloat)aspectRatio {
     if (self = [super init]) {
+        [self _commonResizeFilterInit];
+        
         self.aspectRatio = aspectRatio;
         self.outputResolution = resolution;//relies on aspectRatio being set
     }
@@ -61,10 +63,16 @@
 
 -(id)initWithOutputSize:(CGSize)outputSize {
     if (self = [super init]) {
+        [self _commonResizeFilterInit];
+        
         self.outputSize = outputSize;
     }
     
     return self;
+}
+
+-(void)_commonResizeFilterInit {
+//    self.shouldSmoothlyScaleOutput = YES;//foo
 }
 
 @end

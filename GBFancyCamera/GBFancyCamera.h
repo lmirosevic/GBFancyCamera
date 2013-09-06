@@ -27,7 +27,7 @@ typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *pro
 //if you set a delegate, he will be notified when a pic is taken or when taking is cancelled
 @property (weak, nonatomic) id<GBFanceCameraDelegate>       delegate;
 
-//set to an array of filter objects that inherit from GPUImageFilter and that conform to GBFancyCameraFilterProtocol
+//set to an array of filter objects that inherit from GPUImageOutput and that conform to GBFancyCameraFilterProtocol & GPUImageInput
 @property (strong, nonatomic) NSArray                       *filters;
 
 //resize the output image
