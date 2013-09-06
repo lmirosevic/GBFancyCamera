@@ -296,14 +296,11 @@ typedef enum {
 -(void)setFilters:(NSArray *)filters {
     NSMutableArray *myFilters = [NSMutableArray new];
     
-    //add in the plain one
-    [myFilters addObject:GBNoFilter.new];
-    
     //add in all the rest
     for (Class filterClass in filters) {
         if ([filterClass conformsToProtocol:@protocol(GBFancyCameraFilterProtocol)] &&
             [filterClass conformsToProtocol:@protocol(GPUImageInput)] &&
-            [filterClass isKindOfClass:GPUImageOutput.class]) {
+            [filterClass isSubclassOfClass:GPUImageOutput.class]) {
             [myFilters addObject:filterClass];
         }
         else {
