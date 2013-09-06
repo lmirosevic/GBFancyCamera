@@ -10,6 +10,8 @@
 
 #import "GPUImage.h"
 
+#import "UIImage+Rotating.h"//foo temp
+
 static CGFloat const kCameraAspectRatio =                           4./3.;
 
 static CGFloat const kBottomBarHeight =                             53;
@@ -260,6 +262,8 @@ typedef enum {
 @property (strong, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>        *currentFilter;
 @property (weak, nonatomic) GPUImageFilter                                                      *liveEgressMain;
 
+@property (assign, nonatomic) UIDeviceOrientation                                               deviceOrientation;
+
 @end
 
 @implementation GBFancyCamera
@@ -292,6 +296,28 @@ typedef enum {
 }
 
 #pragma mark - CA
+
+-(void)setDeviceOrientation:(UIDeviceOrientation)deviceOrientation {
+    switch (deviceOrientation) {
+        case UIDeviceOrientationFaceDown:
+        case UIDeviceOrientationFaceUp: {
+            //noop, leave it as it is
+        } break;
+            
+        case UIDeviceOrientationLandscapeLeft:
+        case UIDeviceOrientationLandscapeRight:
+        case UIDeviceOrientationPortrait:
+        case UIDeviceOrientationPortraitUpsideDown: {
+            _deviceOrientation = deviceOrientation;
+        } break;
+            
+        case UIDeviceOrientationUnknown: {
+            //noop, rely on default and previous value
+        } break;
+    }
+    
+    [self _handleUIOrientation];
+}
 
 -(void)setFilters:(NSArray *)filters {
     NSMutableArray *myFilters = [NSMutableArray new];
@@ -328,6 +354,12 @@ typedef enum {
 -(void)viewDidLoad {
     [super viewDidLoad];
 
+    //device orientation detection
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotateDevice:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    self.deviceOrientation = UIDeviceOrientationPortrait;//fallback
+    self.deviceOrientation = [UIDevice currentDevice].orientation;//try to get current state
+    
     //full screen stuff
     self.view.backgroundColor = [UIColor blackColor];
     self.wantsFullScreenLayout = YES;
@@ -486,6 +518,7 @@ typedef enum {
     [self.liveEgressMain addTarget:self.livePreviewView];
     
     //turn on the camera
+    self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
     [self.stillCamera resumeCameraCapture];
     
     //close the shutter on top and make it ready
@@ -524,6 +557,7 @@ typedef enum {
 }
 
 -(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.stillCamera stopCameraCapture];
     [self _cleanupHeavyStuff];
 }
@@ -540,7 +574,39 @@ typedef enum {
     self.completionBlock = block;
 }
 
+#pragma mark - Orientation notifications
+
+-(void)didRotateDevice:(NSNotification *)notification {
+    self.deviceOrientation = [UIDevice currentDevice].orientation;
+}
+
 #pragma mark - util
+
+-(CGFloat)_rotationAngleForCurrentDeviceOrientation {
+    switch (self.deviceOrientation) {
+        case UIDeviceOrientationPortraitUpsideDown: {
+            return M_PI;
+        } break;
+            
+        case UIDeviceOrientationLandscapeRight: {
+            return M_PI_2;
+        } break;
+            
+        case UIDeviceOrientationLandscapeLeft: {
+            return -M_PI_2;
+        } break;
+            
+        case UIDeviceOrientationPortrait:
+        default: {
+            return 0;
+        } break;
+    }
+}
+
+-(void)_handleUIOrientation {
+    //just rotate snapper button for now
+    self.mainButton.transform = CGAffineTransformMakeRotation([self _rotationAngleForCurrentDeviceOrientation]);//foo
+}
 
 -(void)_dismiss {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
@@ -558,6 +624,7 @@ typedef enum {
     [self.liveEgressMain addTarget:self.livePreviewView];
     
     //continue capturing
+    self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
     [self.stillCamera resumeCameraCapture];
     
     [self _transitionUIToState:GBFancyCameraStateCapturing animated:YES];
@@ -582,7 +649,9 @@ typedef enum {
     
     //take photo
     [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-        self.originalImage = [processedImage copy];
+        UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
+        
+        self.originalImage = rotatedImage;
     
         //create thumbnails
         [self _createFilterViews];
@@ -634,6 +703,19 @@ typedef enum {
     //select the first one initially
     GBFilterView *firstFilterView = self.filterViews[0];
     firstFilterView.isSelected = YES;
+    [self _applyFilterWithClass:firstFilterView.filterClass];
+}
+
+-(void)_applyFilterWithClass:(Class)filterClass {
+    GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterClass new];
+    self.currentFilter = filterObject;
+    [self.liveEgressMain removeAllTargets];
+    
+    GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
+    [pic addTarget:filterObject];
+    [filterObject addTarget:self.livePreviewView];
+    self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
+    [pic processImage];
 }
 
 -(void)_destroyFilterViews {
@@ -762,14 +844,7 @@ typedef enum {
     }
 
     //create filter
-    GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterView.filterClass new];
-    self.currentFilter = filterObject;
-    [self.liveEgressMain removeAllTargets];
-    
-    GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
-    [pic addTarget:filterObject];
-    [filterObject addTarget:self.livePreviewView];
-    [pic processImage];
+    [self _applyFilterWithClass:filterView.filterClass];
 }
 
 #pragma mark - Actions
