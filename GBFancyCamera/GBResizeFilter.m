@@ -21,23 +21,42 @@
 -(void)setOutputResolution:(CGFloat)outputResolution {
     if (outputResolution < 0) @throw [NSException exceptionWithName:NSArgumentDomain reason:@"outputResolution must be positive" userInfo:nil];
     
-    _outputResolution = outputResolution;
-    
     if (outputResolution == GBResizeFilterUnlimitedResolution) {
-        [self forceProcessingAtSizeRespectingAspectRatio:CGSizeZero];
+        self.outputSize = CGSizeZero;
     }
     else {
         CGFloat boxSide = sqrtf(outputResolution) * self.aspectRatio;
-        [self forceProcessingAtSizeRespectingAspectRatio:CGSizeMake(boxSide, boxSide)];
+        self.outputSize = CGSizeMake(boxSide, boxSide);
     }
+}
+
+-(CGFloat)outputResolution {
+    return self.outputSize.width * self.outputSize.height;
+}
+
+-(void)setOutputSize:(CGSize)outputSize {
+    if (outputSize.width < 0 || outputSize.height < 0) @throw [NSException exceptionWithName:NSArgumentDomain reason:@"outputSize must be positive in both dimensions" userInfo:nil];
+    
+    _outputSize = outputSize;
+    
+//    [self forceProcessingAtSizeRespectingAspectRatio:outputSize];
+    [self forceProcessingAtSizeRespectingAspectRatio:CGSizeMake(410,730)];
 }
 
 #pragma mark - mem
 
--(id)initWithOutputResolution:(CGFloat)resolution cameraAspectRatio:(CGFloat)aspectRatio {
+-(id)initWithOutputResolution:(CGFloat)resolution aspectRatio:(CGFloat)aspectRatio {
     if (self = [super init]) {
-        self.outputResolution = resolution;
         self.aspectRatio = aspectRatio;
+        self.outputResolution = resolution;//relies on aspectRatio being set
+    }
+    
+    return self;
+}
+
+-(id)initWithOutputSize:(CGSize)outputSize {
+    if (self = [super init]) {
+        self.outputSize = outputSize;
     }
     
     return self;

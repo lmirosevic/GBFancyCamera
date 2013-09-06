@@ -13,7 +13,9 @@
 @interface GBResizeFilter : GPUImageFilter
 
 @property (assign, nonatomic) CGFloat       outputResolution;
+@property (assign, nonatomic) CGSize        outputSize;
 
--(id)initWithOutputResolution:(CGFloat)resolution cameraAspectRatio:(CGFloat)aspectRatio;
+-(id)initWithOutputResolution:(CGFloat)resolution aspectRatio:(CGFloat)aspectRatio;
+-(id)initWithOutputSize:(CGSize)outputSize;
 
 @end

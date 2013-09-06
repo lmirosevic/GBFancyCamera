@@ -10,6 +10,8 @@
 
 #import "GPUImage.h"
 
+static CGFloat const kCameraAspectRatio =                           4./3.;
+
 static CGFloat const kBottomBarHeight =                             48;
 static CGFloat const kBottomBarBottomOffset =                       0;
 static CGFloat const kBarButtonsBottomCenterOffset =                2;
@@ -36,20 +38,27 @@ static UIEdgeInsets const kThumbnailBoxMargin =                     (UIEdgeInset
 
 static CGFloat const kThumbnailBackgroundImageTopCenterMargin =     30;
 
-static CGFloat const kImageTopCenterMargin =                        30;
-static CGFloat const kImageCornerRadius =                           4;
+static CGSize const kThumbnailImageSize =                           (CGSize){44, 44};//?
+static CGFloat const kThumbnailImageTopCenterMargin =               30;
+static CGFloat const kThumbnailImageCornerRadius =                  4;
 
+static CGFloat const kFilterNameTopCenterMargin =                   63;
+static CGSize const kFilterNameShadowOffset =                       (CGSize){0, 1};
 #define kFilterNameFont                                             [UIFont fontWithName:@"HelveticaNeue-Medium" size:12]
 #define kFilterNameTextColorOff                                     [UIColor colorWithWhite:1 alpha:0.76]
 #define kFilterNameShadowColorOff                                   [UIColor colorWithWhite:0 alpha:1]
 #define kFilterNameTextColorOn                                      [UIColor colorWithWhite:1 alpha:1]
 #define kFilterNameShadowColorOn                                    [UIColor colorWithWhite:0 alpha:1]
-static CGSize const kFilterNameShadowOffset =                       (CGSize){0, 1};
-static CGFloat const kFilterNameTopCenterMargin =                   63;
 
+static CGFloat const kBarHeadingTopCenterOffset =                   2;
+static CGSize const kBarHeadingShadowOffset =                       (CGSize){0, -1};
+static CGFloat const kBarHeadingHorizontalPadding =                 88;
+static CGFloat const kBarHeadingHeight =                            24;
 #define kBarHeadingFont                                             [UIFont fontWithName:@"HelveticaNeue-Bold" size:20]
+#define kBarHeadingTextColor                                        [UIColor colorWithWhite:1 alpha:1]
 #define kBarHeadingShadowColor                                      [UIColor colorWithWhite:0 alpha:1]
-static CGSize const kBarHeadingShadowOffset =                       (CGSize){0, 1};
+
+static NSTimeInterval const kStateTransitionAnimationDuration =     0.3;
 
 static BOOL const kDefaultShouldAutoDismiss =                       YES;
 static CGFloat const kDefaultOutputImageResolution =                GBUnlimitedImageResolution;
@@ -84,7 +93,10 @@ typedef enum {
 @property (assign, nonatomic) BOOL                                  isPresented;
 @property (copy, nonatomic) GBFancyCameraCompletionBlock            completionBlock;
 @property (strong, nonatomic) UIImage                               *originalImage;
+@property (strong, nonatomic) UIImage                               *originalImageThumbnailSize;
 @property (strong, nonatomic) UIImage                               *processedImage;
+@property (strong, nonatomic) GBResizeFilter                        *resizerThumbnail;
+@property (strong, nonatomic) GBResizeFilter                        *resizerMain;
 
 @end
 
@@ -119,6 +131,22 @@ typedef enum {
 
 #pragma mark - CA
 
+-(GBResizeFilter *)resizerThumbnail {
+    if (!_resizerThumbnail) {
+        _resizerThumbnail = [[GBResizeFilter alloc] initWithOutputSize:kThumbnailImageSize];
+    }
+    
+    return _resizerThumbnail;
+}
+
+-(GBResizeFilter *)resizerMain {
+    if (!_resizerMain) {
+        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:self.outputImageResolution aspectRatio:kCameraAspectRatio];
+    }
+    
+    return _resizerMain;
+}
+
 -(void)setState:(GBFancyCameraState)state {
     [self _transitionToState:state animated:NO];
 }
@@ -144,7 +172,7 @@ typedef enum {
     
     //set up camera stuff
     self.stillCamera = [[GPUImageStillCamera alloc] init];//perhaps init this sooner so loading is faster
-    GPUImageSepiaFilter *sepia = [GPUImageSepiaFilter new];
+//    GPUImageSepiaFilter *sepia = [GPUImageSepiaFilter new];
 //    GPUImageGammaFilter *filter = [[GPUImageGammaFilter alloc] init];
     GPUImageView *targetView = [[GPUImageView alloc] initWithFrame:CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
                                                                               self.view.bounds.origin.y + kCameraViewportPadding.top,
@@ -153,11 +181,25 @@ typedef enum {
     targetView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     targetView.autoresizesSubviews = YES;
     
+    targetView.fillMode = kGPUImageFillModePreserveAspectRatio;
+//    targetView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
     self.stillCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
-    targetView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
 
-    [self.stillCamera addTarget:sepia];
-    [sepia addTarget:targetView];
+//    [self.stillCamera addTarget:sepia];
+//    [sepia addTarget:targetView];
+    [self.stillCamera addTarget:self.resizerThumbnail];
+    [self.stillCamera addTarget:self.resizerMain];
+    
+    GPUImageFilter *passtru = [GPUImageFilter new];
+    
+    GPUImageLanczosResamplingFilter *resizer = [[GPUImageLanczosResamplingFilter alloc] init];
+    [resizer forceProcessingAtSizeRespectingAspectRatio:CGSizeMake(200, 200)];
+    
+    [self.stillCamera addTarget:passtru];
+    [passtru addTarget:resizer];
+    [resizer addTarget:targetView];
+    
+//    [self.resizerMain addTarget:targetView];//foo
 //    [self.stillCamera addTarget:filter];
 //    [filter addTarget:targetView];
     [self.view addSubview:targetView];
@@ -263,8 +305,19 @@ typedef enum {
     self.filtersScrollView.contentInset = kFiltersScrollViewContentInset;
     [self.filtersContainerView addSubview:self.filtersScrollView];
     
-    //handles opacities, positions, etc
-    [self _transitionToState:GBFancyCameraStateCapturing animated:NO forced:YES];
+    //bar heading label
+    self.barHeadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(kBarHeadingHorizontalPadding,
+                                                                     (self.barContainerView.bounds.size.height - kBarHeadingHeight) / 2 + kBarHeadingTopCenterOffset,
+                                                                     self.barContainerView.bounds.size.width - 2 * kBarHeadingHorizontalPadding,
+                                                                     kBarHeadingHeight)];
+    self.barHeadingLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.barHeadingLabel.backgroundColor = [UIColor clearColor];
+    self.barHeadingLabel.font = kBarHeadingFont;
+    self.barHeadingLabel.textAlignment = NSTextAlignmentCenter;
+    self.barHeadingLabel.shadowOffset = kBarHeadingShadowOffset;
+    self.barHeadingLabel.shadowColor = kBarHeadingShadowColor;
+    self.barHeadingLabel.textColor = kBarHeadingTextColor;
+    [self.barContainerView insertSubview:self.barHeadingLabel aboveSubview:self.barBackgroundImageView];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -279,7 +332,12 @@ typedef enum {
     //turn on the camera
     [self.stillCamera startCameraCapture];
     
-    //add the shutter on top and make it ready
+    //close the shutter on top and make it ready
+
+    //maybe do some preloading here of filters etc.
+    
+    //prep
+    [self _transitionToState:GBFancyCameraStateCapturing animated:NO forced:YES];
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -348,6 +406,11 @@ typedef enum {
 
 -(void)_capturePhoto {
     //takes photo
+    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.resizerMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+        self.originalImage = processedImage;
+                
+        //create thumb filter
+    }];
     
     //creates thumbnails
     
@@ -392,28 +455,58 @@ typedef enum {
 -(void)_transitionToState:(GBFancyCameraState)state animated:(BOOL)animated forced:(BOOL)forced {
     if (_state != state || forced) {
         //do the animation to move around buttons and stuff
+        NSTimeInterval duration = animated ? kStateTransitionAnimationDuration : 0;
         switch (state) {
             case GBFancyCameraStateCapturing: {
-                NSArray *array = @[UIViewController.class, UIView.class];
-                //main button
-                [self.mainButton setImage:[UIImage imageNamed:@"snap-button-camera"] forState:UIControlStateNormal];
-                
-                //retake button
-                self.retakeButton.alpha = 0;
-                
-                //filters
-                self.filtersContainerView.frame = CGRectMake(0,
-                                                             self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetClosed,
-                                                             self.filtersContainerView.frame.size.height,
-                                                             self.filtersContainerView.frame.size.width);
+                [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //main button
+                    [self.mainButton setImage:[UIImage imageNamed:@"snap-button-icon-camera"] forState:UIControlStateNormal];
+                    self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
+                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonBottomCenterOffset,
+                                                       self.mainButton.frame.size.width,
+                                                       self.mainButton.frame.size.height);
+                    
+                    //retake button
+                    self.retakeButton.alpha = 0;
+                    
+                    //camera roll button
+                    self.cameraRollButton.alpha = 1;
+                    
+                    //filters
+                    self.filtersContainerView.frame = CGRectMake(0,
+                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetClosed,
+                                                                 self.filtersContainerView.frame.size.width,
+                                                                 self.filtersContainerView.frame.size.height);
+                    //heading
+                    self.barHeadingLabel.alpha = 0;
+                } completion:nil];
             } break;
                 
             case GBFancyCameraStateFilters: {
-                //filters
-                self.filtersContainerView.frame = CGRectMake(0,
-                                                             self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetOpen,
-                                                             self.filtersContainerView.frame.size.height,
-                                                             self.filtersContainerView.frame.size.width);
+                [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //main button
+                    [self.mainButton setImage:[UIImage imageNamed:@"snap-button-icon-tick"] forState:UIControlStateNormal];
+                    self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
+                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonBottomCenterOffset,
+                                                       self.mainButton.frame.size.width,
+                                                       self.mainButton.frame.size.height);
+                    
+                    //retake button
+                    self.retakeButton.alpha = 1;
+                    
+                    //camera roll button
+                    self.cameraRollButton.alpha = 0;
+                    
+                    //filters
+                    self.filtersContainerView.frame = CGRectMake(0,
+                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetOpen,
+                                                                 self.filtersContainerView.frame.size.width,
+                                                                 self.filtersContainerView.frame.size.height);
+                    
+                    //heading
+                    self.barHeadingLabel.text = NSLocalizedString(@"Filters", @"filters state heading");
+                    self.barHeadingLabel.alpha = 1;
+                } completion:nil];
             } break;
         }
         

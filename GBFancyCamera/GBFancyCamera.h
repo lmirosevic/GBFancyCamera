@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "GBFancyCameraFilters.h"
+
 typedef enum {
     GBFancyCameraSourceNone,
     GBFancyCameraSourceCamera,
