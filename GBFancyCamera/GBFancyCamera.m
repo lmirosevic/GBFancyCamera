@@ -253,6 +253,7 @@ typedef enum {
 @property (assign, nonatomic) BOOL                                                              isPresented;
 @property (copy, nonatomic) GBFancyCameraCompletionBlock                                        completionBlock;
 @property (strong, nonatomic) UIImage                                                           *originalImage;
+@property (strong, nonatomic) UIImage                                                           *processedImage;
 @property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
 @property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
 @property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
@@ -263,11 +264,10 @@ typedef enum {
 
 @implementation GBFancyCamera
 
-//foo tapping a filter thumb should scroll to him
+//foo orientation stuff
 //foo needs to handle case where there is no camera (e.g. simulator)
 //up would be nice to be able to handle different orientation, always, even if the app only claims to only support a single orientation
 //up would be nice to be able to switch camera and turn on flash
-//foo dont forget image res
 //foo dont forget bundles for assets like images and translation strings
 
 #pragma mark - Memory
@@ -348,10 +348,10 @@ typedef enum {
     [self.stillCamera addTarget:self.passthroughFilter];
     [self.passthroughFilter addTarget:self.resizerMain];
     
-    //filters then get plugged into these ones
-    self.liveEgressMain = self.resizerMain;
+    [self.stillCamera startCameraCapture];
     
-    [self.liveEgressMain addTarget:self.livePreviewView];
+    //filters then get plugged into this one
+    self.liveEgressMain = self.resizerMain;
     
     [self.view addSubview:self.livePreviewView];
     
@@ -482,8 +482,11 @@ typedef enum {
     //hide the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     
+    //connect the main thing
+    [self.liveEgressMain addTarget:self.livePreviewView];
+    
     //turn on the camera
-    [self.stillCamera startCameraCapture];
+    [self.stillCamera resumeCameraCapture];
     
     //close the shutter on top and make it ready
 
@@ -517,9 +520,11 @@ typedef enum {
     self.completionBlock = nil;
     
     //make sure camera capture is off
+    [self.stillCamera pauseCameraCapture];
+}
+
+-(void)dealloc {
     [self.stillCamera stopCameraCapture];
-    
-    //cleanup
     [self _cleanupHeavyStuff];
 }
 
@@ -559,11 +564,14 @@ typedef enum {
 }
 
 -(void)_finishedProcessingPhoto {
+    self.processedImage = [self.currentFilter imageByFilteringImage:self.originalImage];
     [self _returnControlCancelled:NO];
+    [self _cleanupHeavyStuff];
 }
 
 -(void)_cancel {
     [self _returnControlCancelled:YES];
+    [self _cleanupHeavyStuff];
 }
 
 -(void)_capturePhoto {
@@ -574,7 +582,7 @@ typedef enum {
     
     //take photo
     [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-        self.originalImage = [processedImage copy];//foo maybe no copy
+        self.originalImage = [processedImage copy];
     
         //create thumbnails
         [self _createFilterViews];
@@ -587,7 +595,7 @@ typedef enum {
 }
 
 -(void)_createFilterViews {
-    self.filtersScrollView.alwaysBounceHorizontal = YES;//foo
+    self.filtersScrollView.alwaysBounceHorizontal = YES;
     self.filterViews = [NSMutableArray new];
     
     NSUInteger index = 0;
@@ -636,6 +644,16 @@ typedef enum {
 }
 
 -(void)_returnControlCancelled:(BOOL)cancelled {
+    //call delegate methods
+    if (self.delegate) {
+        if (cancelled) {
+            [self.delegate fancyCameraDidCancelTakingPhoto:self];
+        }
+        else {
+            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:0];//foo should get original, filtered and source somehow
+        }
+    }
+    
     //call block based method
     if (self.completionBlock) {
         BOOL shouldDismiss = kDefaultShouldAutoDismiss;
@@ -644,23 +662,13 @@ typedef enum {
             self.completionBlock(nil, nil, NO, GBFancyCameraSourceNone, &shouldDismiss);
         }
         else {
-            self.completionBlock(nil, nil, YES, 0, &shouldDismiss);//foo should get original, filtered and source somehow
+            self.completionBlock(self.originalImage, self.processedImage, YES, 0, &shouldDismiss);//foo should get original, filtered and source somehow
         }
         self.completionBlock = nil;
         
         //dismiss if we need to
         if (shouldDismiss) {
             [self _dismiss];
-        }
-    }
-    
-    //call delegate methods
-    if (self.delegate) {
-        if (cancelled) {
-            [self.delegate fancyCameraDidCancelTakingPhoto:self];
-        }
-        else {
-            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:nil processedImage:nil fromSource:0];//foo should get original, filtered and source somehow
         }
     }
 }
@@ -735,6 +743,7 @@ typedef enum {
 -(void)_cleanupHeavyStuff {
     //ditch all hight memory stuff
     self.originalImage = nil;
+    self.processedImage = nil;
     
     [self.currentFilter removeAllTargets];
     self.currentFilter = nil;
