@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A00D70D17D9ABDD003DC60C /* GBResizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A00D70C17D9ABDD003DC60C /* GBResizeFilter.m */; };
 		8A20018317CFAD1C0046E265 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A20018217CFAD1B0046E265 /* Foundation.framework */; };
 		8A20018817CFAD1C0046E265 /* GBFancyCamera.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8A20018717CFAD1C0046E265 /* GBFancyCamera.h */; };
 		8A20018A17CFAD1C0046E265 /* GBFancyCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A20018917CFAD1C0046E265 /* GBFancyCamera.m */; };
@@ -55,6 +56,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8A00D70B17D9ABDD003DC60C /* GBResizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBResizeFilter.h; sourceTree = "<group>"; };
+		8A00D70C17D9ABDD003DC60C /* GBResizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBResizeFilter.m; sourceTree = "<group>"; };
+		8A00D71017D9ABF2003DC60C /* GBFancyCameraFilters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GBFancyCameraFilters.h; sourceTree = "<group>"; };
 		8A20017F17CFAD1B0046E265 /* libGBFancyCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGBFancyCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A20018217CFAD1B0046E265 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8A20018617CFAD1C0046E265 /* GBFancyCamera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GBFancyCamera-Prefix.pch"; sourceTree = "<group>"; };
@@ -155,6 +159,9 @@
 			children = (
 				8A20018717CFAD1C0046E265 /* GBFancyCamera.h */,
 				8A20018917CFAD1C0046E265 /* GBFancyCamera.m */,
+				8A00D71017D9ABF2003DC60C /* GBFancyCameraFilters.h */,
+				8A00D70B17D9ABDD003DC60C /* GBResizeFilter.h */,
+				8A00D70C17D9ABDD003DC60C /* GBResizeFilter.m */,
 			);
 			name = Code;
 			sourceTree = "<group>";
@@ -235,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A20018A17CFAD1C0046E265 /* GBFancyCamera.m in Sources */,
+				8A00D70D17D9ABDD003DC60C /* GBResizeFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
