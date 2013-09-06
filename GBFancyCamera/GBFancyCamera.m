@@ -568,7 +568,7 @@ typedef enum {
 
 -(void)_retake {
     [self.stillCamera resumeCameraCapture];
-    [self.stillCamera startCameraCapture];
+//    [self.stillCamera startCameraCapture];
     
     [self _transitionUIToState:GBFancyCameraStateCapturing animated:YES];
 }
@@ -584,12 +584,12 @@ typedef enum {
 -(void)_capturePhoto {
     self.mainButton.enabled = NO;
     
-    //stop capture
     [self.stillCamera pauseCameraCapture];
     
     //take photo
     [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
         self.originalImage = processedImage;
+        self.imagePreviewImageView.image = self.originalImage;//foo
     
         [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImageThumb, NSError *error) {
             self.originalImageThumbnailSize = processedImageThumb;
