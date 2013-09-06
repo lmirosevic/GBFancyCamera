@@ -266,11 +266,11 @@ typedef enum {
 
 @implementation GBFancyCamera
 
-//foo orientation stuff
 //foo needs to handle case where there is no camera (e.g. simulator)
 //up would be nice to be able to handle different orientation, always, even if the app only claims to only support a single orientation
 //up would be nice to be able to switch camera and turn on flash
 //foo dont forget bundles for assets like images and translation strings
+//camera roll
 
 #pragma mark - Memory
 
