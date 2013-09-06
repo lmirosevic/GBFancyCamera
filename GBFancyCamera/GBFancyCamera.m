@@ -577,31 +577,33 @@ typedef enum {
 -(void)_capturePhoto {
     self.mainButton.enabled = NO;
     
+    //camera capture
     [self.stillCamera pauseCameraCapture];
 
     //create thumbnails
     [self _createFilterViews];
-
+    
     //transition state
     [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
     
-//    //take photo
-//    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-//        self.originalImage = processedImage;
-//    
-//        [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImageThumb, NSError *error) {
-//            self.originalImageThumbnailSize = processedImageThumb;
-//            
-//            //create thumbnails
-//            [self _createFilterViews];
-//            
-//            //transition state
-//            [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
-//            
-//            self.mainButton.enabled = YES;
-//
-//        }];
-//    }];
+    
+    //take photo
+    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+        self.originalImage = processedImage;
+    
+        [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressThumbs withCompletionHandler:^(UIImage *processedImageThumb, NSError *error) {
+            self.originalImageThumbnailSize = processedImageThumb;
+            
+            //create thumbnails
+            [self _createFilterViews];
+            
+            //transition state
+            [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
+            
+            self.mainButton.enabled = YES;
+
+        }];
+    }];
 }
 
 -(void)_createFilterViews {
