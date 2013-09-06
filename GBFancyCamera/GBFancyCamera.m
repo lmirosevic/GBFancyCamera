@@ -12,10 +12,10 @@
 
 static CGFloat const kCameraAspectRatio =                           4./3.;
 
-static CGFloat const kBottomBarHeight =                             48;
-static CGFloat const kBottomBarBottomOffset =                       0;
-static CGFloat const kBarButtonsBottomCenterOffset =                2;
-static CGFloat const kMainButtonBottomCenterOffset =                2;
+static CGFloat const kBottomBarHeight =                             53;
+static CGFloat const kBottomBarBottomMargin =                       0;
+static CGFloat const kBarButtonsCenterOffset =                      2;
+static CGFloat const kMainButtonCenterOffset =                      0;
 static CGFloat const kMainButtonAcceptModeRightCenterMargin =       23;
 static CGFloat const kRetakeButtonRightCenterMargin =               73;
 static CGFloat const kCancelButtonLeftCenterMargin =                24;
@@ -24,25 +24,25 @@ static CGFloat const kCameraRollButtonRightCenterMargin =           24;
 static CGFloat const kBarButtonsFanoutRadius =                      6;//defines how much bigger the button is than its image
 static CGFloat const kMainButtonFanoutRadius =                      0;//defines how much bigger the button is than its image
 
-static CGFloat const kFilterTrayHeight =                            79;
-static CGFloat const kFilterTrayBottomOffsetOpen =                  44;
-static CGFloat const kFilterTrayBottomOffsetClosed =                kBottomBarHeight + kBottomBarBottomOffset - kFilterTrayHeight - 0;
+static CGFloat const kFilterTrayHeight =                            89;
+static CGFloat const kFilterTrayBottomMarginOpen =                  49;
+static CGFloat const kFilterTrayBottomMarginClosed =                kBottomBarHeight + kBottomBarBottomMargin - kFilterTrayHeight - 0;
 
 static UIEdgeInsets const kCameraViewportPadding =                  (UIEdgeInsets){0, 0, 40, 0};
 
-static UIEdgeInsets const kFiltersScrollViewMargin =                (UIEdgeInsets){8, 0, 1, 0};//so it doesn't cover stuff or go too far
-static UIEdgeInsets const kFiltersScrollViewContentInset =          (UIEdgeInsets){0, 4, 0, 50};//add some right padding, maybe some left
+static UIEdgeInsets const kFiltersScrollViewMargin =                (UIEdgeInsets){6, 0, 1, 0};//so it doesn't cover stuff or go too far
+static UIEdgeInsets const kFiltersScrollViewContentInset =          (UIEdgeInsets){0, 2, 0, 50};//add some right padding, maybe some left
 
-static CGSize const kThumbnailBoxSize =                             (CGSize){56, 70};
-static UIEdgeInsets const kThumbnailBoxMargin =                     (UIEdgeInsets){4, 4, 0, 4};//collapsible
+static CGSize const kThumbnailBoxSize =                             (CGSize){68, 74};
+static UIEdgeInsets const kThumbnailBoxMargin =                     (UIEdgeInsets){4, 6, 0, 4};//collapsible
 
 static CGFloat const kThumbnailBackgroundImageTopCenterMargin =     30;
 
-static CGSize const kThumbnailImageSize =                           (CGSize){44, 44};//?
+static CGSize const kThumbnailImageSize =                           (CGSize){56, 56};
 static CGFloat const kThumbnailImageTopCenterMargin =               30;
 static CGFloat const kThumbnailImageCornerRadius =                  4;
 
-static CGFloat const kFilterNameTopCenterMargin =                   63;
+static CGFloat const kFilterNameTopCenterMargin =                   68;
 static CGSize const kFilterNameShadowOffset =                       (CGSize){0, 1};
 static CGFloat const kFilterNameHeight =                            16;
 #define kFilterNameFont                                             [UIFont fontWithName:@"ArialRoundedMTBold" size:10]
@@ -51,7 +51,7 @@ static CGFloat const kFilterNameHeight =                            16;
 #define kFilterNameTextColorOn                                      [UIColor colorWithWhite:1 alpha:1]
 #define kFilterNameShadowColorOn                                    [UIColor colorWithWhite:0 alpha:1]
 
-static CGFloat const kBarHeadingTopCenterOffset =                   2;
+static CGFloat const kBarHeadingCenterOffset =                      2;
 static CGSize const kBarHeadingShadowOffset =                       (CGSize){0, -1};
 static CGFloat const kBarHeadingHorizontalPadding =                 88;
 static CGFloat const kBarHeadingHeight =                            24;
@@ -133,6 +133,7 @@ typedef enum {
 -(id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         //tap gesture
+        self.userInteractionEnabled = YES;
         self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
         [self addGestureRecognizer:self.tapGestureRecognizer];
         
@@ -141,6 +142,7 @@ typedef enum {
                                                                                  kThumbnailBackgroundImageTopCenterMargin,
                                                                                  0,
                                                                                  0)];
+        self.backgroundImageView.userInteractionEnabled = NO;
         self.backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self addSubview:self.backgroundImageView];
         
@@ -149,6 +151,7 @@ typedef enum {
                                                                        kThumbnailImageTopCenterMargin - kThumbnailImageSize.height / 2,
                                                                        kThumbnailImageSize.width,
                                                                        kThumbnailImageSize.height)];
+        self.imageView.userInteractionEnabled = NO;
         self.imageView.clipsToBounds = YES;
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         self.imageView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -160,6 +163,7 @@ typedef enum {
                                                                     kFilterNameTopCenterMargin - kFilterNameHeight / 2,
                                                                     self.bounds.size.width,
                                                                     kFilterNameHeight)];
+        self.titleLabel.userInteractionEnabled = NO;
         self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -167,11 +171,9 @@ typedef enum {
         self.titleLabel.shadowOffset = kFilterNameShadowOffset;
         [self addSubview:self.titleLabel];
         
-        self.imageView.alpha = 0.5;//foo
-        
         //set images
-//        self.backgroundImageWhenSelected = ;
-//        self.backgroundImageWhenDeselected = ;
+        self.backgroundImageWhenSelected = [UIImage imageNamed:@"fancy-camera-filter-background-on"];
+        self.backgroundImageWhenDeselected = [UIImage imageNamed:@"fancy-camera-filter-background-off"];
         
         //default selection
         self.isSelected = NO;
@@ -184,6 +186,7 @@ typedef enum {
 
 -(void)didTap:(UITapGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateEnded) {
+        self.isSelected = YES;
         [self.delegate didSelectFilterView:self];
     }
 }
@@ -360,7 +363,7 @@ typedef enum {
     
     //bar container
     self.barContainerView = [[UIView alloc] initWithFrame:CGRectMake(0,
-                                                                     self.view.bounds.size.height - kBottomBarHeight - kBottomBarBottomOffset,
+                                                                     self.view.bounds.size.height - kBottomBarHeight - kBottomBarBottomMargin,
                                                                      self.view.bounds.size.width,
                                                                      kBottomBarHeight)];
     self.barContainerView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
@@ -371,18 +374,18 @@ typedef enum {
                                                                                 0,
                                                                                 self.barContainerView.bounds.size.width,
                                                                                 self.barContainerView.bounds.size.height)];
-    self.barBackgroundImageView.image = [[UIImage imageNamed:@"photo-snapper-bar-bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+    self.barBackgroundImageView.image = [[UIImage imageNamed:@"fancy-camera-bar"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     self.barBackgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     [self.barContainerView addSubview:self.barBackgroundImageView];
 
     //cancel button
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.cancelButton addTarget:self action:@selector(cancelAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *cancelImage = [UIImage imageNamed:@"snapper-icon-cancel"];
+    UIImage *cancelImage = [UIImage imageNamed:@"fancy-camera-bar-button-icon-cancel"];
     CGSize cancelButtonSize = CGSizeMake(cancelImage.size.width + kBarButtonsFanoutRadius * 2,
                                    cancelImage.size.height + kBarButtonsFanoutRadius * 2);
     self.cancelButton.frame = CGRectMake(kCancelButtonLeftCenterMargin - cancelButtonSize.width / 2,
-                                         (self.barContainerView.bounds.size.height - cancelButtonSize.height) / 2 + kBarButtonsBottomCenterOffset,
+                                         (self.barContainerView.bounds.size.height - cancelButtonSize.height) / 2 + kBarButtonsCenterOffset,
                                          cancelButtonSize.width,
                                          cancelButtonSize.height);
     [self.cancelButton setImage:cancelImage forState:UIControlStateNormal];
@@ -392,11 +395,11 @@ typedef enum {
     //camera roll button
     self.cameraRollButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.cameraRollButton addTarget:self action:@selector(cameraRollAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *cameraRollImage = [UIImage imageNamed:@"snapper-icon-pics"];
+    UIImage *cameraRollImage = [UIImage imageNamed:@"fancy-camera-bar-button-icon-camera-roll"];
     CGSize cameraRollButtonSize = CGSizeMake(cameraRollImage.size.width + kBarButtonsFanoutRadius * 2,
                                              cameraRollImage.size.height + kBarButtonsFanoutRadius * 2);
     self.cameraRollButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kCameraRollButtonRightCenterMargin + cameraRollButtonSize.width / 2),
-                                             (self.barContainerView.bounds.size.height - cameraRollButtonSize.height) / 2 + kBarButtonsBottomCenterOffset,
+                                             (self.barContainerView.bounds.size.height - cameraRollButtonSize.height) / 2 + kBarButtonsCenterOffset,
                                              cameraRollButtonSize.width,
                                              cameraRollButtonSize.height);
     [self.cameraRollButton setImage:cameraRollImage forState:UIControlStateNormal];
@@ -406,11 +409,11 @@ typedef enum {
     //main button
     self.mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.mainButton addTarget:self action:@selector(mainAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *mainButtonMainImage = [UIImage imageNamed:@"snap-button"];
+    UIImage *mainButtonMainImage = [UIImage imageNamed:@"fancy-camera-snap-button"];
     CGSize mainButtonSize = CGSizeMake(mainButtonMainImage.size.width + kMainButtonFanoutRadius * 2,
                                        mainButtonMainImage.size.height + kMainButtonFanoutRadius * 2);
     self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - mainButtonSize.width) / 2,
-                                       (self.barContainerView.bounds.size.height - mainButtonSize.height) / 2 + kMainButtonBottomCenterOffset,
+                                       (self.barContainerView.bounds.size.height - mainButtonSize.height) / 2 + kMainButtonCenterOffset,
                                        mainButtonSize.width,
                                        mainButtonSize.height);
     [self.mainButton setBackgroundImage:mainButtonMainImage forState:UIControlStateNormal];
@@ -421,11 +424,11 @@ typedef enum {
     //retake button
     self.retakeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.retakeButton addTarget:self action:@selector(retakeAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *retakeImage = [UIImage imageNamed:@"snapper-icon-retake"];
+    UIImage *retakeImage = [UIImage imageNamed:@"fancy-camera-bar-button-icon-retake"];
     CGSize retakeButtonSize = CGSizeMake(retakeImage.size.width + kBarButtonsFanoutRadius * 2,
                                          retakeImage.size.height + kBarButtonsFanoutRadius * 2);
     self.retakeButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kRetakeButtonRightCenterMargin + retakeButtonSize.width / 2),
-                                         (self.barContainerView.bounds.size.height - retakeButtonSize.height) / 2 + kBarButtonsBottomCenterOffset,
+                                         (self.barContainerView.bounds.size.height - retakeButtonSize.height) / 2 + kBarButtonsCenterOffset,
                                          retakeButtonSize.width,
                                          retakeButtonSize.height);
     [self.retakeButton setImage:retakeImage forState:UIControlStateNormal];
@@ -434,7 +437,7 @@ typedef enum {
     
     //filter container
     self.filtersContainerView = [[UIView alloc] initWithFrame:CGRectMake(0,
-                                                                        self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetOpen,
+                                                                        self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginOpen,
                                                                         self.view.bounds.size.width,
                                                                         kFilterTrayHeight)];
     self.filtersContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
@@ -445,7 +448,7 @@ typedef enum {
                                                                                 0,
                                                                                 self.filtersContainerView.bounds.size.width,
                                                                                 self.filtersContainerView.bounds.size.height)];
-    self.filtersBackgroundImageView.image = [[UIImage imageNamed:@"mesh-tray"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+    self.filtersBackgroundImageView.image = [[UIImage imageNamed:@"fancy-camera-mesh-bar"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     self.filtersBackgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     [self.filtersContainerView addSubview:self.filtersBackgroundImageView];
     
@@ -460,7 +463,7 @@ typedef enum {
     
     //bar heading label
     self.barHeadingLabel = [[UILabel alloc] initWithFrame:CGRectMake(kBarHeadingHorizontalPadding,
-                                                                     (self.barContainerView.bounds.size.height - kBarHeadingHeight) / 2 + kBarHeadingTopCenterOffset,
+                                                                     (self.barContainerView.bounds.size.height - kBarHeadingHeight) / 2 + kBarHeadingCenterOffset,
                                                                      self.barContainerView.bounds.size.width - 2 * kBarHeadingHorizontalPadding,
                                                                      kBarHeadingHeight)];
     self.barHeadingLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -562,12 +565,12 @@ typedef enum {
     self.mainButton.enabled = NO;
     
     //stop capture
-    [self.stillCamera pauseCameraCapture];
+    [self.stillCamera stopCameraCapture];
     
     //take photo
-    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.resizerMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-        self.originalImage = processedImage;
-        
+//    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.egressFilterMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+//        self.originalImage = processedImage;
+    
         //create thumbnails
         [self _createFilterViews];
         
@@ -575,7 +578,7 @@ typedef enum {
         [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
         
         self.mainButton.enabled = YES;
-    }];
+//    }];
 }
 
 -(void)_createFilterViews {
@@ -589,6 +592,7 @@ typedef enum {
                                                                                   kThumbnailBoxMargin.top,
                                                                                   kThumbnailBoxSize.width,
                                                                                   kThumbnailBoxSize.height)];
+        filterView.delegate = self;
         filterView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
         
         //filter name
@@ -674,9 +678,9 @@ typedef enum {
             case GBFancyCameraStateCapturing: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //main button
-                    [self.mainButton setImage:[UIImage imageNamed:@"snap-button-icon-camera"] forState:UIControlStateNormal];
+                    [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-camera"] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
-                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonBottomCenterOffset,
+                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
                                                        self.mainButton.frame.size.width,
                                                        self.mainButton.frame.size.height);
                     
@@ -688,7 +692,7 @@ typedef enum {
                     
                     //filters
                     self.filtersContainerView.frame = CGRectMake(0,
-                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetClosed,
+                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginClosed,
                                                                  self.filtersContainerView.frame.size.width,
                                                                  self.filtersContainerView.frame.size.height);
                     //heading
@@ -699,9 +703,9 @@ typedef enum {
             case GBFancyCameraStateFilters: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //main button
-                    [self.mainButton setImage:[UIImage imageNamed:@"snap-button-icon-tick"] forState:UIControlStateNormal];
+                    [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-tick"] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
-                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonBottomCenterOffset,
+                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
                                                        self.mainButton.frame.size.width,
                                                        self.mainButton.frame.size.height);
                     
@@ -713,7 +717,7 @@ typedef enum {
                     
                     //filters
                     self.filtersContainerView.frame = CGRectMake(0,
-                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomOffsetOpen,
+                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginOpen,
                                                                  self.filtersContainerView.frame.size.width,
                                                                  self.filtersContainerView.frame.size.height);
                     
@@ -743,7 +747,7 @@ typedef enum {
     //deselect all the other ones
     for (GBFilterView *anotherFilterView in self.filterViews) {
         if (anotherFilterView != filterView) {
-            filterView.isSelected = NO;
+            anotherFilterView.isSelected = NO;
         }
     }
     
