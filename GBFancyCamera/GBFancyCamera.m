@@ -612,8 +612,7 @@ typedef enum {
     
     //take photo
     [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-//        UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
-        UIImage *rotatedImage = [processedImage rotateInDegrees:90];
+        UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
         
         self.originalImage = rotatedImage;
     
