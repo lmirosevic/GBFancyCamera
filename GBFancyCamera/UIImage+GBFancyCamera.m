@@ -1,17 +1,30 @@
 //
-//  UIImage+Rotation.m
-//  NYXImagesKit
+//  UIImage+GBFancyCamera.m
+//  GBFancyCamera
 //
-//  Created by @Nyx0uf on 02/05/11.
-//  Copyright 2012 Nyx0uf. All rights reserved.
-//  www.cocoaintheshell.com
+//  Created by Luka Mirosevic on 29/08/2013.
+//  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
+#import "UIImage+GBFancyCamera.h"
 
-#import "UIImage+Rotating.h"
 #import <QuartzCore/QuartzCore.h>
 
-@implementation UIImage (NYX_Rotating)
+@implementation UIImage (GBFancyCamera)
+
++(UIImage *)imageWithSolidColor:(UIColor *)color {
+    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
 
 -(UIImage *)rotateInRadians:(float)radians {
 	// Create an ARGB bitmap context
@@ -47,21 +60,9 @@
 	return resultImage;
 }
 
-
-
-// Returns a copy of this image that is cropped to the given bounds.
-// The bounds will be adjusted using CGRectIntegral.
-// This method ignores the image's imageOrientation setting.
--(UIImage *)cropToRect:(CGRect)rect {
-    CGImageRef imageRef = CGImageCreateWithImageInRect([self CGImage], rect);
-    UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
-    CGImageRelease(imageRef);
-    return croppedImage;
-}
-
 // Returns a rescaled copy of the image, taking into account its orientation
 // The image will be scaled disproportionately if necessary to fit the bounds specified by the parameter
-- (UIImage *)resizedImage:(CGSize)newSize interpolationQuality:(CGInterpolationQuality)quality {
+-(UIImage *)resizedImage:(CGSize)newSize interpolationQuality:(CGInterpolationQuality)quality {
     BOOL drawTransposed;
     switch ( self.imageOrientation )
     {
@@ -79,35 +80,6 @@
     
     return [self resizedImage:newSize transform:transform drawTransposed:drawTransposed interpolationQuality:quality];
 }
-
-// Resizes the image according to the given content mode, taking into account the image's orientation
-- (UIImage *)resizedImageWithContentMode:(UIViewContentMode)contentMode
-                                  bounds:(CGSize)bounds
-                    interpolationQuality:(CGInterpolationQuality)quality {
-    CGFloat horizontalRatio = bounds.width / self.size.width;
-    CGFloat verticalRatio = bounds.height / self.size.height;
-    CGFloat ratio;
-    
-    switch (contentMode) {
-        case UIViewContentModeScaleAspectFill:
-            ratio = MAX(horizontalRatio, verticalRatio);
-            break;
-            
-        case UIViewContentModeScaleAspectFit:
-            ratio = MIN(horizontalRatio, verticalRatio);
-            break;
-            
-        default:
-            [NSException raise:NSInvalidArgumentException format:@"Unsupported content mode: %d", contentMode];
-    }
-    
-    CGSize newSize = CGSizeMake(self.size.width * ratio, self.size.height * ratio);
-    
-    return [self resizedImage:newSize interpolationQuality:quality];
-}
-
-#pragma mark -
-#pragma mark Private helper methods
 
 // Returns a copy of the image that has been transformed using the given affine transform and scaled to the new size
 // The new image's orientation will be UIImageOrientationUp, regardless of the current image's orientation
@@ -196,20 +168,6 @@
     }
     
     return transform;
-}
-
-+(UIImage *)imageWithSolidColor:(UIColor *)color {
-    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
-    UIGraphicsBeginImageContext(rect.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextSetFillColorWithColor(context, [color CGColor]);
-    CGContextFillRect(context, rect);
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return image;
 }
 
 @end

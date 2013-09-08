@@ -18,7 +18,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 //image manipulation imports
-#import "UIImage+Rotating.h"//foo temp
+#import "UIImage+GBFancyCamera.h"
 
 //media picker imports
 #import <MobileCoreServices/MobileCoreServices.h>
