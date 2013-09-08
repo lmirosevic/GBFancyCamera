@@ -33,9 +33,8 @@
 
 	CGRect rotatedRect = CGRectApplyAffineTransform(CGRectMake(0., 0., width, height), CGAffineTransformMakeRotation(radians));
 
-	CGContextRef bmContext = NYXCreateARGBBitmapContext((size_t)rotatedRect.size.width, (size_t)rotatedRect.size.height, (size_t)rotatedRect.size.width * kNyxNumberOfComponentsPerARBGPixel, YES);
-	if (!bmContext)
-		return nil;
+	CGContextRef bmContext = CGBitmapContextCreate(NULL, (size_t)rotatedRect.size.width, (size_t)rotatedRect.size.height, 8/*Bits per component*/, (size_t)rotatedRect.size.width * 4, CGColorSpaceCreateDeviceRGB(), kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+    if (!bmContext) @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"Could not create bitmapContext with width: %zu, height: %zu", width, height] userInfo:nil];
 
 	// Image quality
 	CGContextSetShouldAntialias(bmContext, true);

@@ -21,7 +21,6 @@
 		8A7242F417D9FA2F00071E46 /* GBSepiaFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7242F317D9FA2F00071E46 /* GBSepiaFilter.m */; };
 		8A7242FC17DA002A00071E46 /* GBNoFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7242FB17DA002A00071E46 /* GBNoFilter.m */; };
 		8A72436517DA3F3D00071E46 /* UIImage+GBFancyCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */; };
-		8A72436817DA3F4500071E46 /* NYXImagesHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72436717DA3F4500071E46 /* NYXImagesHelper.m */; };
 		8AF64F4717DC7CF400E6134F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
@@ -88,8 +87,6 @@
 		8A7242FB17DA002A00071E46 /* GBNoFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBNoFilter.m; sourceTree = "<group>"; };
 		8A72436317DA3F3C00071E46 /* UIImage+GBFancyCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+GBFancyCamera.h"; sourceTree = "<group>"; };
 		8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+GBFancyCamera.m"; sourceTree = "<group>"; };
-		8A72436617DA3F4500071E46 /* NYXImagesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYXImagesHelper.h; sourceTree = "<group>"; };
-		8A72436717DA3F4500071E46 /* NYXImagesHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYXImagesHelper.m; sourceTree = "<group>"; };
 		8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -180,8 +177,6 @@
 		8A20019B17CFAD710046E265 /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				8A72436617DA3F4500071E46 /* NYXImagesHelper.h */,
-				8A72436717DA3F4500071E46 /* NYXImagesHelper.m */,
 				8A72436317DA3F3C00071E46 /* UIImage+GBFancyCamera.h */,
 				8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */,
 				8A20018717CFAD1C0046E265 /* GBFancyCamera.h */,
@@ -284,7 +279,6 @@
 				8A7242F417D9FA2F00071E46 /* GBSepiaFilter.m in Sources */,
 				8A7242FC17DA002A00071E46 /* GBNoFilter.m in Sources */,
 				8A72436517DA3F3D00071E46 /* UIImage+GBFancyCamera.m in Sources */,
-				8A72436817DA3F4500071E46 /* NYXImagesHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

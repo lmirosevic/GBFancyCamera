@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-#import "NYXImagesHelper.h"
-
 #import <UIKit/UIKit.h>
 
 @interface UIImage (GBFancyCamera)

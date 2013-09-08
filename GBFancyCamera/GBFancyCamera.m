@@ -887,6 +887,18 @@ typedef enum {
     [self _destroyFilterViews];
 }
 
+-(UIImage *)_processCameraRollImage:(UIImage *)originalImage {
+    //first resize it to a better size
+    CGFloat originalResolution = originalImage.size.width * originalImage.size.height;
+    CGFloat scalingFactor = pow(self.outputImageResolution / originalResolution, 0.5);
+    CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
+    
+    //scale and rotate image
+    UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
+    
+    return scaledAndRotatedImage;
+}
+
 #pragma mark - System media picker util
 
 -(BOOL)_canShowSystemMediaBrowser {
@@ -911,24 +923,11 @@ typedef enum {
 
 #pragma mark - UIImagePickerControllerDelegate
 
-//foo
--(UIImage *)_processImage:(UIImage *)originalImage {
-    //first resize it to a better size
-    CGFloat originalResolution = originalImage.size.width * originalImage.size.height;
-    CGFloat scalingFactor = pow(self.outputImageResolution / originalResolution, 0.5);
-    CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
-
-    //scale and rotate image
-    UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
-
-    return scaledAndRotatedImage;
-}
-
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSLog(@"picked");
     UIImage *image = (UIImage *)[info objectForKey:UIImagePickerControllerOriginalImage];
     
-    UIImage *resizedAndRotatedImage = [self _processImage:image];
+    UIImage *resizedAndRotatedImage = [self _processCameraRollImage:image];
     
     [self _obtainedNewImage:resizedAndRotatedImage fromSource:GBFancyCameraSourceCameraRoll];
     
