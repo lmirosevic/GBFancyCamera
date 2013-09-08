@@ -35,7 +35,7 @@ static CGFloat const kFilterTrayHeight =                            89;
 static CGFloat const kFilterTrayBottomMarginOpen =                  49;
 static CGFloat const kFilterTrayBottomMarginClosed =                kBottomBarHeight + kBottomBarBottomMargin - kFilterTrayHeight - 0;
 
-static UIEdgeInsets const kCameraViewportPadding =                  (UIEdgeInsets){0, 0, 50, 0};
+static UIEdgeInsets const kCameraViewportPadding =                  (UIEdgeInsets){0, 0, 48, 0};
 
 static UIEdgeInsets const kFiltersScrollViewMargin =                (UIEdgeInsets){6, 0, 1, 0};//so it doesn't cover stuff or go too far
 static UIEdgeInsets const kFiltersScrollViewContentInset =          (UIEdgeInsets){0, 2, 0, 36};//add some right padding, maybe some left
@@ -65,6 +65,12 @@ static CGFloat const kBarHeadingHeight =                            24;
 #define kBarHeadingFont                                             [UIFont fontWithName:@"HelveticaNeue-Bold" size:20]
 #define kBarHeadingTextColor                                        [UIColor colorWithWhite:1 alpha:1]
 #define kBarHeadingShadowColor                                      [UIColor colorWithWhite:0 alpha:1]
+
+#define kNoCameraLabelTextColor                                     [UIColor whiteColor];
+#define kNoCameraLabelFont                                          [UIFont fontWithName:@"HelveticaNeue-Bold" size:14]
+static CGFloat const kNoCameraLabelHeight =                         80;
+static CGFloat const kNoCameraLabelHorizontalMargin =               20;
+
 
 static NSTimeInterval const kStateTransitionAnimationDuration =     0.3;
 
@@ -124,13 +130,18 @@ typedef enum {
 
 @property (strong, nonatomic) UILabel                                                           *barHeadingLabel;
 
+@property (strong, nonatomic) UILabel                                                           *noCameraLabel;
+
 @property (strong, nonatomic) NSMutableArray                                                    *filterViews;
 
 @property (assign, nonatomic) BOOL                                                              isPresented;
+
 @property (copy, nonatomic) GBFancyCameraCompletionBlock                                        completionBlock;
+
 @property (strong, nonatomic) UIImage                                                           *originalImage;
-@property (assign, nonatomic) GBFancyCameraSource                                               imageSource;
 @property (strong, nonatomic) UIImage                                                           *processedImage;
+@property (assign, nonatomic) GBFancyCameraSource                                               imageSource;
+
 @property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
 @property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
 @property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
@@ -209,7 +220,7 @@ typedef enum {
         //foo rounded corners
         [self addSubview:self.imageView];
         
-        //label
+        //title label
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,
                                                                     kFilterNameTopCenterMargin - kFilterNameHeight / 2,
                                                                     self.bounds.size.width,
@@ -280,10 +291,8 @@ typedef enum {
 @implementation GBFancyCamera
 
 //foo needs to handle case where there is no camera (e.g. simulator)
-//up would be nice to be able to handle different orientation, always, even if the app only claims to only support a single orientation
 //up would be nice to be able to switch camera and turn on flash
 //foo dont forget bundles for assets like images and translation strings
-//camera roll
 
 #pragma mark - Memory
 
@@ -489,6 +498,19 @@ typedef enum {
     self.barHeadingLabel.shadowColor = kBarHeadingShadowColor;
     self.barHeadingLabel.textColor = kBarHeadingTextColor;
     [self.barContainerView insertSubview:self.barHeadingLabel aboveSubview:self.barBackgroundImageView];
+    
+    //no camera label
+    self.noCameraLabel = [[UILabel alloc] initWithFrame:CGRectMake(kNoCameraLabelHorizontalMargin,
+                                                                  (self.view.bounds.size.height - kBottomBarHeight - kNoCameraLabelHeight) / 2,
+                                                                  self.view.bounds.size.width - 2*kNoCameraLabelHorizontalMargin,
+                                                                  kNoCameraLabelHeight)];
+    self.noCameraLabel.backgroundColor = [UIColor clearColor];
+    self.noCameraLabel.textAlignment = NSTextAlignmentCenter;
+    self.noCameraLabel.numberOfLines = 8;
+    self.noCameraLabel.text = NSLocalizedString(@"No camera available.\nYou can still use the camera roll.", @"no camera string");
+    self.noCameraLabel.font = kNoCameraLabelFont;
+    self.noCameraLabel.textColor = kNoCameraLabelTextColor;
+    [self.view addSubview:self.noCameraLabel];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -507,10 +529,6 @@ typedef enum {
         //turn on the camera
         self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
         [self.stillCamera resumeCameraCapture];
-        
-        //close the shutter on top and make it ready
-
-        //maybe do some preloading here of filters etc.
         
         //prep
         [self _transitionToState:GBFancyCameraStateCapturing animated:NO forced:YES];
@@ -593,6 +611,15 @@ typedef enum {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)_handleNoCameraLabel {
+    BOOL hasCamera = [self.stillCamera isBackFacingCameraPresent];
+    BOOL livePreviewState = (self.state == GBFancyCameraStateCapturing);
+    
+    //handle no camera
+    BOOL showNoCameraLabel = (livePreviewState && !hasCamera);
+    self.noCameraLabel.hidden = !showNoCameraLabel;
+}
+
 -(void)_finishedProcessingPhoto {
     self.processedImage = [self.currentFilter imageByFilteringImage:self.originalImage];
     [self _returnControlCancelled:NO];
@@ -606,18 +633,25 @@ typedef enum {
 }
 
 -(void)_capturePhoto {
-    self.mainButton.enabled = NO;
-    
-    //camera capture
-    [self.stillCamera pauseCameraCapture];
-    
-    //take photo
-    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-        UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
-        [self _obtainedNewImage:rotatedImage fromSource:GBFancyCameraSourceCamera];
+    //if it has a cam do the right thing
+    if ([self.stillCamera isBackFacingCameraPresent]) {
+        self.mainButton.enabled = NO;
         
-        self.mainButton.enabled = YES;
-    }];
+        //camera capture
+        [self.stillCamera pauseCameraCapture];
+        
+        //take photo
+        [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+            UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
+            [self _obtainedNewImage:rotatedImage fromSource:GBFancyCameraSourceCamera];
+            
+            self.mainButton.enabled = YES;
+        }];
+    }
+    //otherwise redirect to the camera roll
+    else {
+        [self _cameraRoll];
+    }
 }
 
 -(void)_cameraRoll {
@@ -633,6 +667,17 @@ typedef enum {
 -(void)_retake {
     //cleanup heavy
     [self _cleanupHeavyStuff];
+    
+    //griz clear live preview view
+    [self.livePreviewView setNeedsDisplay];
+    
+    //reset output if camera isn't available (if one is available, then the new camera feed will purge whats in there currently, if there is no camera feed however, then we need to manually clear it by pushing through a black image)
+    if (![self.stillCamera isBackFacingCameraPresent]) {
+        GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:[UIImage imageWithSolidColor:[UIColor blackColor]]];
+        [pic addTarget:self.livePreviewView];
+        [pic processImage];
+        [pic removeAllTargets];
+    }
     
     //reconnect live feed
     [self.liveEgressMain addTarget:self.livePreviewView];
@@ -758,11 +803,11 @@ typedef enum {
         switch (state) {
             case GBFancyCameraStateCapturing: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-                    //viewport (not animated)
-                    self.livePreviewView.frame = CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
+                    //viewport
+                    self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
                                                             self.view.bounds.origin.y + kCameraViewportPadding.top,
-                                                            self.view.bounds.size.width - (kCameraViewportPadding.left + kCameraViewportPadding.right),
-                                                            self.view.bounds.size.height - (kCameraViewportPadding.top + kCameraViewportPadding.bottom));
+                                                            self.livePreviewView.frame.size.width,
+                                                            self.livePreviewView.frame.size.height);
                     
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-camera"] forState:UIControlStateNormal];
@@ -789,11 +834,11 @@ typedef enum {
                 
             case GBFancyCameraStateFilters: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-                    //viewport (not animated)
-                    self.livePreviewView.frame = CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
-                                                            self.view.bounds.origin.y + kCameraViewportPadding.top - 35,
-                                                            self.view.bounds.size.width - (kCameraViewportPadding.left + kCameraViewportPadding.right),
-                                                            self.view.bounds.size.height - (kCameraViewportPadding.top + kCameraViewportPadding.bottom));
+                    //viewport
+                    self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                            (self.view.bounds.size.height - (kFilterTrayHeight + kFilterTrayBottomMarginOpen) - self.livePreviewView.frame.size.height) / 2,
+                                                            self.livePreviewView.frame.size.width,
+                                                            self.livePreviewView.frame.size.height);
                     
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-tick"] forState:UIControlStateNormal];
@@ -823,6 +868,9 @@ typedef enum {
         
         //remember state
         _state = state;
+        
+        //handle no camera label
+        [self _handleNoCameraLabel];
     }
 }
 

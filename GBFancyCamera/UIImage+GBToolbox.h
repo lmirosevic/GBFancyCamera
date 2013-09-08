@@ -20,5 +20,6 @@
 -(UIImage *)cropToRect:(CGRect)rect;
 -(UIImage *)resizedImage:(CGSize)newSize interpolationQuality:(CGInterpolationQuality)quality;
 -(UIImage *)resizedImageWithContentMode:(UIViewContentMode)contentMode bounds:(CGSize)bounds interpolationQuality:(CGInterpolationQuality)quality;
-
++(UIImage *)imageWithSolidColor:(UIColor *)color;
+    
 @end
