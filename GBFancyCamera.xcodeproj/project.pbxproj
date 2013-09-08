@@ -22,6 +22,7 @@
 		8A7242FC17DA002A00071E46 /* GBNoFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7242FB17DA002A00071E46 /* GBNoFilter.m */; };
 		8A72436517DA3F3D00071E46 /* UIImage+Rotating.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72436417DA3F3D00071E46 /* UIImage+Rotating.m */; };
 		8A72436817DA3F4500071E46 /* NYXImagesHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72436717DA3F4500071E46 /* NYXImagesHelper.m */; };
+		8AF64F4717DC7CF400E6134F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		8A72436417DA3F3D00071E46 /* UIImage+Rotating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Rotating.m"; sourceTree = "<group>"; };
 		8A72436617DA3F4500071E46 /* NYXImagesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYXImagesHelper.h; sourceTree = "<group>"; };
 		8A72436717DA3F4500071E46 /* NYXImagesHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYXImagesHelper.m; sourceTree = "<group>"; };
+		8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AF64F4717DC7CF400E6134F /* MobileCoreServices.framework in Frameworks */,
 				8A2001F917CFB0B50046E265 /* QuartzCore.framework in Frameworks */,
 				8A2001F717CFB0B00046E265 /* AVFoundation.framework in Frameworks */,
 				8A2001F517CFB0A80046E265 /* OpenGLES.framework in Frameworks */,
@@ -128,6 +131,7 @@
 		8A20018117CFAD1B0046E265 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */,
 				8A2001F817CFB0B50046E265 /* QuartzCore.framework */,
 				8A2001F617CFB0B00046E265 /* AVFoundation.framework */,
 				8A2001F417CFB0A80046E265 /* OpenGLES.framework */,

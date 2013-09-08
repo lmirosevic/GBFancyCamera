@@ -10,7 +10,11 @@
 
 #import "GPUImage.h"
 
+//rotation imports
 #import "UIImage+Rotating.h"//foo temp
+
+//media picker imports
+#import <MobileCoreServices/MobileCoreServices.h>
 
 static CGFloat const kCameraAspectRatio =                           4./3.;
 
@@ -75,20 +79,20 @@ typedef enum {
 
 @interface GBFilterView : UIView
 
-@property (weak, nonatomic) id<GBFilterViewDelegate>                                        delegate;
-@property (strong, nonatomic) UIImage                                                       *image;
-@property (copy, nonatomic) NSString                                                        *title;
-@property (assign, nonatomic) BOOL                                                          isSelected;
-@property (strong, nonatomic) Class                                                         filterClass;
+@property (weak, nonatomic) id<GBFilterViewDelegate>                                            delegate;
+@property (strong, nonatomic) UIImage                                                           *image;
+@property (copy, nonatomic) NSString                                                            *title;
+@property (assign, nonatomic) BOOL                                                              isSelected;
+@property (strong, nonatomic) Class                                                             filterClass;
 
-@property (strong, nonatomic) UIImage                                                       *backgroundImageWhenSelected;
-@property (strong, nonatomic) UIImage                                                       *backgroundImageWhenDeselected;
+@property (strong, nonatomic) UIImage                                                           *backgroundImageWhenSelected;
+@property (strong, nonatomic) UIImage                                                           *backgroundImageWhenDeselected;
 
-@property (strong, nonatomic) UIImageView                                                   *backgroundImageView;
-@property (strong, nonatomic) UIImageView                                                   *imageView;
-@property (strong, nonatomic) UILabel                                                       *titleLabel;
+@property (strong, nonatomic) UIImageView                                                       *backgroundImageView;
+@property (strong, nonatomic) UIImageView                                                       *imageView;
+@property (strong, nonatomic) UILabel                                                           *titleLabel;
 
-@property (strong, nonatomic) UITapGestureRecognizer                                        *tapGestureRecognizer;
+@property (strong, nonatomic) UITapGestureRecognizer                                            *tapGestureRecognizer;
 
 @end
 
@@ -96,6 +100,49 @@ typedef enum {
 @required
 
 -(void)didSelectFilterView:(GBFilterView *)filterView;
+
+@end
+
+@interface GBFancyCamera () <GBFilterViewDelegate>
+
+@property (assign, nonatomic) GBFancyCameraState                                                state;
+
+@property (strong, nonatomic) GPUImageStillCamera                                               *stillCamera;
+
+@property (strong, nonatomic) UIView                                                            *barContainerView;
+@property (strong, nonatomic) UIImageView                                                       *barBackgroundImageView;
+
+@property (strong, nonatomic) UIButton                                                          *mainButton;
+@property (strong, nonatomic) UIButton                                                          *cancelButton;
+@property (strong, nonatomic) UIButton                                                          *cameraRollButton;
+@property (strong, nonatomic) UIButton                                                          *retakeButton;
+
+@property (strong, nonatomic) UIView                                                            *filtersContainerView;
+@property (strong, nonatomic) UIImageView                                                       *filtersBackgroundImageView;
+@property (strong, nonatomic) UIScrollView                                                      *filtersScrollView;
+
+@property (strong, nonatomic) UILabel                                                           *barHeadingLabel;
+
+@property (strong, nonatomic) NSMutableArray                                                    *filterViews;
+
+@property (assign, nonatomic) BOOL                                                              isPresented;
+@property (copy, nonatomic) GBFancyCameraCompletionBlock                                        completionBlock;
+@property (strong, nonatomic) UIImage                                                           *originalImage;
+@property (assign, nonatomic) GBFancyCameraSource                                               imageSource;
+@property (strong, nonatomic) UIImage                                                           *processedImage;
+@property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
+@property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
+@property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
+@property (strong, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>        *currentFilter;
+@property (weak, nonatomic) GPUImageFilter                                                      *liveEgressMain;
+
+@end
+
+@interface GBFilterView ()
+
+@end
+
+@interface GBFancyCamera () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @end
 
@@ -203,7 +250,7 @@ typedef enum {
         //label
         self.titleLabel.textColor = kFilterNameTextColorOn;
         self.titleLabel.shadowColor = kFilterNameShadowColorOn;
-
+        
         //bg
         CGSize size = self.backgroundImageWhenSelected.size;
         self.backgroundImageView.frame = CGRectMake((self.bounds.size.width - size.width) / 2,
@@ -226,41 +273,6 @@ typedef enum {
         self.backgroundImageView.image = self.backgroundImageWhenDeselected;
     }
 }
-
-
-@end
-
-@interface GBFancyCamera () <GBFilterViewDelegate>
-
-@property (assign, nonatomic) GBFancyCameraState                                                state;
-
-@property (strong, nonatomic) GPUImageStillCamera                                               *stillCamera;
-
-@property (strong, nonatomic) UIView                                                            *barContainerView;
-@property (strong, nonatomic) UIImageView                                                       *barBackgroundImageView;
-
-@property (strong, nonatomic) UIButton                                                          *mainButton;
-@property (strong, nonatomic) UIButton                                                          *cancelButton;
-@property (strong, nonatomic) UIButton                                                          *cameraRollButton;
-@property (strong, nonatomic) UIButton                                                          *retakeButton;
-
-@property (strong, nonatomic) UIView                                                            *filtersContainerView;
-@property (strong, nonatomic) UIImageView                                                       *filtersBackgroundImageView;
-@property (strong, nonatomic) UIScrollView                                                      *filtersScrollView;
-
-@property (strong, nonatomic) UILabel                                                           *barHeadingLabel;
-
-@property (strong, nonatomic) NSMutableArray                                                    *filterViews;
-
-@property (assign, nonatomic) BOOL                                                              isPresented;
-@property (copy, nonatomic) GBFancyCameraCompletionBlock                                        completionBlock;
-@property (strong, nonatomic) UIImage                                                           *originalImage;
-@property (strong, nonatomic) UIImage                                                           *processedImage;
-@property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
-@property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
-@property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
-@property (strong, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>        *currentFilter;
-@property (weak, nonatomic) GPUImageFilter                                                      *liveEgressMain;
 
 @end
 
@@ -480,26 +492,28 @@ typedef enum {
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    //internal state
-    self.isPresented = YES;
-    
-    //hide the status bar
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-    
-    //connect the main thing
-    [self.liveEgressMain addTarget:self.livePreviewView];
-    
-    //turn on the camera
-    self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
-    [self.stillCamera resumeCameraCapture];
-    
-    //close the shutter on top and make it ready
 
-    //maybe do some preloading here of filters etc.
-    
-    //prep
-    [self _transitionToState:GBFancyCameraStateCapturing animated:NO forced:YES];
+    if (!self.presentedViewController) {
+        //internal state
+        self.isPresented = YES;
+        
+        //hide the status bar
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+        
+        //connect the main thing
+        [self.liveEgressMain addTarget:self.livePreviewView];
+        
+        //turn on the camera
+        self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
+        [self.stillCamera resumeCameraCapture];
+        
+        //close the shutter on top and make it ready
+
+        //maybe do some preloading here of filters etc.
+        
+        //prep
+        [self _transitionToState:GBFancyCameraStateCapturing animated:NO forced:YES];
+    }
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -511,22 +525,25 @@ typedef enum {
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    //show the status bar, but only if it was previously shown
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
-    
+    if (!self.presentedViewController) {
+        //show the status bar, but only if it was previously shown
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+    }
 }
 
 -(void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     
-    //internal state
-    self.isPresented = NO;
-    
-    //clear this just in case
-    self.completionBlock = nil;
-    
-    //make sure camera capture is off
-    [self.stillCamera pauseCameraCapture];
+    if (!self.presentedViewController) {
+        //internal state
+        self.isPresented = NO;
+        
+        //clear this just in case
+        self.completionBlock = nil;
+        
+        //make sure camera capture is off
+        [self.stillCamera pauseCameraCapture];
+    }
 }
 
 -(void)dealloc {
@@ -575,8 +592,41 @@ typedef enum {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)_finishedProcessingPhoto {
+    self.processedImage = [self.currentFilter imageByFilteringImage:self.originalImage];
+    [self _returnControlCancelled:NO];
+    [self _cleanupHeavyStuff];
+}
+
+-(void)_cancel {
+    //foo refactor to be successfulCapture:NO
+    [self _returnControlCancelled:YES];
+    [self _cleanupHeavyStuff];
+}
+
+-(void)_capturePhoto {
+    self.mainButton.enabled = NO;
+    
+    //camera capture
+    [self.stillCamera pauseCameraCapture];
+    
+    //take photo
+    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+        UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
+        [self _obtainedNewImage:rotatedImage fromSource:GBFancyCameraSourceCamera];
+        
+        self.mainButton.enabled = YES;
+    }];
+}
+
 -(void)_cameraRoll {
-    //show camera roll picker
+    if ([self _canShowSystemMediaBrowser]) {
+        self.cameraRollButton.enabled = NO;
+        [self _showSystemMediaBrowser];
+    }
+    else {
+        //foo show some error
+    }
 }
 
 -(void)_retake {
@@ -593,37 +643,15 @@ typedef enum {
     [self _transitionUIToState:GBFancyCameraStateCapturing animated:YES];
 }
 
--(void)_finishedProcessingPhoto {
-    self.processedImage = [self.currentFilter imageByFilteringImage:self.originalImage];
-    [self _returnControlCancelled:NO];
-    [self _cleanupHeavyStuff];
-}
-
--(void)_cancel {
-    [self _returnControlCancelled:YES];
-    [self _cleanupHeavyStuff];
-}
-
--(void)_capturePhoto {
-    self.mainButton.enabled = NO;
+-(void)_obtainedNewImage:(UIImage *)image fromSource:(GBFancyCameraSource)source {
+    self.originalImage = image;
+    self.imageSource = source;
     
-    //camera capture
-    [self.stillCamera pauseCameraCapture];
+    //create thumbnails
+    [self _createFilterViews];
     
-    //take photo
-    [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
-        UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
-        
-        self.originalImage = rotatedImage;
-    
-        //create thumbnails
-        [self _createFilterViews];
-        
-        //transition state
-        [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
-        
-        self.mainButton.enabled = YES;
-    }];
+    //transition state
+    [self _transitionUIToState:GBFancyCameraStateFilters animated:YES];
 }
 
 -(void)_createFilterViews {
@@ -646,7 +674,6 @@ typedef enum {
         //filter name
         filterView.title = filterObject.localisedName;
         
-        //griz
         UIImage *filteredImage = [filterObject imageByFilteringImage:self.originalImage];
         filterView.image = filteredImage;
         
@@ -695,7 +722,7 @@ typedef enum {
             [self.delegate fancyCameraDidCancelTakingPhoto:self];
         }
         else {
-            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:0];//foo should get original, filtered and source somehow
+            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:self.imageSource];
         }
     }
     
@@ -707,7 +734,8 @@ typedef enum {
             self.completionBlock(nil, nil, NO, GBFancyCameraSourceNone, &shouldDismiss);
         }
         else {
-            self.completionBlock(self.originalImage, self.processedImage, YES, 0, &shouldDismiss);//foo should get original, filtered and source somehow
+            //foo sellvc should check to make sure didTakePhoto says yes
+            self.completionBlock(self.originalImage, self.processedImage, YES, self.imageSource, &shouldDismiss);
         }
         self.completionBlock = nil;
         
@@ -794,6 +822,49 @@ typedef enum {
     self.currentFilter = nil;
 
     [self _destroyFilterViews];
+}
+
+#pragma mark - System media picker util
+
+-(BOOL)_canShowSystemMediaBrowser {
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
+-(void)_showSystemMediaBrowser {
+    UIImagePickerController *mediaUI = [[UIImagePickerController alloc] init];
+    mediaUI.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    mediaUI.mediaTypes = @[(NSString *)kUTTypeImage];
+    mediaUI.allowsEditing = NO;
+    mediaUI.delegate = self;
+    
+    [self.stillCamera pauseCameraCapture];
+    [self presentViewController:mediaUI animated:YES completion:nil];
+}
+
+#pragma mark - UIImagePickerControllerDelegate
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    NSLog(@"picked");
+    UIImage *image = (UIImage *)[info objectForKey:UIImagePickerControllerOriginalImage];
+    
+    //foo resize it and rotate it first
+    
+    [self _obtainedNewImage:image fromSource:GBFancyCameraSourceCameraRoll];
+    
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    self.cameraRollButton.enabled = YES;
+}
+
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    NSLog(@"cancel");
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    [self.stillCamera resumeCameraCapture];
+    self.cameraRollButton.enabled = YES;
 }
 
 #pragma mark - GBFilterViewDelegate
