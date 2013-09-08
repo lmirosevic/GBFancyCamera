@@ -14,16 +14,11 @@
 
 @interface UIImage (NYX_Rotating)
 
--(UIImage*)rotateInRadians:(float)radians;
+-(UIImage *)rotateInRadians:(float)radians;
 
--(UIImage*)rotateInDegrees:(float)degrees;
-
--(UIImage*)rotateImagePixelsInRadians:(float)radians;
-
--(UIImage*)rotateImagePixelsInDegrees:(float)degrees;
-
--(UIImage*)verticalFlip;
-
--(UIImage*)horizontalFlip;
+-(UIImage *)cropToRect:(CGRect)rect;
+-(UIImage *)resizedImage:(CGSize)newSize interpolationQuality:(CGInterpolationQuality)quality;
+-(UIImage *)resizedImageWithContentMode:(UIViewContentMode)contentMode bounds:(CGSize)bounds interpolationQuality:(CGInterpolationQuality)quality;
++(UIImage *)imageWithSolidColor:(UIColor *)color;
 
 @end

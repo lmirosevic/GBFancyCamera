@@ -19,7 +19,6 @@
 
 //image manipulation imports
 #import "UIImage+Rotating.h"//foo temp
-#import "UIImage+GBToolbox.h"//foo temp
 
 //media picker imports
 #import <MobileCoreServices/MobileCoreServices.h>
