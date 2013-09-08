@@ -25,7 +25,7 @@
         self.outputSize = CGSizeZero;
     }
     else {
-        CGFloat boxSide = sqrtf(outputResolution) * self.aspectRatio;
+        CGFloat boxSide = sqrtf(outputResolution * self.aspectRatio);
         self.outputSize = CGSizeMake(boxSide, boxSide);
     }
 }
