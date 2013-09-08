@@ -10,8 +10,9 @@
 
 #import "GPUImage.h"
 
-//rotation imports
+//image manipulation imports
 #import "UIImage+Rotating.h"//foo temp
+#import "UIImage+GBToolbox.h"//foo temp
 
 //media picker imports
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -34,7 +35,7 @@ static CGFloat const kFilterTrayHeight =                            89;
 static CGFloat const kFilterTrayBottomMarginOpen =                  49;
 static CGFloat const kFilterTrayBottomMarginClosed =                kBottomBarHeight + kBottomBarBottomMargin - kFilterTrayHeight - 0;
 
-static UIEdgeInsets const kCameraViewportPadding =                  (UIEdgeInsets){0, 0, 40, 0};
+static UIEdgeInsets const kCameraViewportPadding =                  (UIEdgeInsets){0, 0, 50, 0};
 
 static UIEdgeInsets const kFiltersScrollViewMargin =                (UIEdgeInsets){6, 0, 1, 0};//so it doesn't cover stuff or go too far
 static UIEdgeInsets const kFiltersScrollViewContentInset =          (UIEdgeInsets){0, 2, 0, 36};//add some right padding, maybe some left
@@ -757,6 +758,12 @@ typedef enum {
         switch (state) {
             case GBFancyCameraStateCapturing: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //viewport (not animated)
+                    self.livePreviewView.frame = CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
+                                                            self.view.bounds.origin.y + kCameraViewportPadding.top,
+                                                            self.view.bounds.size.width - (kCameraViewportPadding.left + kCameraViewportPadding.right),
+                                                            self.view.bounds.size.height - (kCameraViewportPadding.top + kCameraViewportPadding.bottom));
+                    
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-camera"] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
@@ -782,6 +789,12 @@ typedef enum {
                 
             case GBFancyCameraStateFilters: {
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //viewport (not animated)
+                    self.livePreviewView.frame = CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
+                                                            self.view.bounds.origin.y + kCameraViewportPadding.top - 35,
+                                                            self.view.bounds.size.width - (kCameraViewportPadding.left + kCameraViewportPadding.right),
+                                                            self.view.bounds.size.height - (kCameraViewportPadding.top + kCameraViewportPadding.bottom));
+                    
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-tick"] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
@@ -848,13 +861,26 @@ typedef enum {
 
 #pragma mark - UIImagePickerControllerDelegate
 
+//foo
+-(UIImage *)_processImage:(UIImage *)originalImage {
+    //first resize it to a better size
+    CGFloat originalResolution = originalImage.size.width * originalImage.size.height;
+    CGFloat scalingFactor = pow(self.outputImageResolution / originalResolution, 0.5);
+    CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
+
+    //scale and rotate image
+    UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
+
+    return scaledAndRotatedImage;
+}
+
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSLog(@"picked");
     UIImage *image = (UIImage *)[info objectForKey:UIImagePickerControllerOriginalImage];
     
-    //foo resize it and rotate it first
+    UIImage *resizedAndRotatedImage = [self _processImage:image];
     
-    [self _obtainedNewImage:image fromSource:GBFancyCameraSourceCameraRoll];
+    [self _obtainedNewImage:resizedAndRotatedImage fromSource:GBFancyCameraSourceCameraRoll];
     
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     self.cameraRollButton.enabled = YES;

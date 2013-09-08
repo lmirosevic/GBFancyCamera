@@ -91,6 +91,8 @@
 		8A72436617DA3F4500071E46 /* NYXImagesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYXImagesHelper.h; sourceTree = "<group>"; };
 		8A72436717DA3F4500071E46 /* NYXImagesHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYXImagesHelper.m; sourceTree = "<group>"; };
 		8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		8AF64F4A17DC87F700E6134F /* UIImage+GBToolbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+GBToolbox.h"; sourceTree = "<group>"; };
+		8AF64F4B17DC87F700E6134F /* UIImage+GBToolbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+GBToolbox.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +186,8 @@
 				8A72436717DA3F4500071E46 /* NYXImagesHelper.m */,
 				8A72436317DA3F3C00071E46 /* UIImage+Rotating.h */,
 				8A72436417DA3F3D00071E46 /* UIImage+Rotating.m */,
+				8AF64F4A17DC87F700E6134F /* UIImage+GBToolbox.h */,
+				8AF64F4B17DC87F700E6134F /* UIImage+GBToolbox.m */,
 				8A20018717CFAD1C0046E265 /* GBFancyCamera.h */,
 				8A20018917CFAD1C0046E265 /* GBFancyCamera.m */,
 				8A72428017D9DEED00071E46 /* GBFancyCameraFilterProtocol.h */,
