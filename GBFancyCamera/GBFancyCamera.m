@@ -578,7 +578,7 @@ static NSBundle *_resourcesBundle;
 }
 
 -(void)dealloc {
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.stillCamera stopCameraCapture];
     [self _cleanupHeavyStuff];
@@ -599,6 +599,7 @@ static NSBundle *_resourcesBundle;
 #pragma mark - util
 
 -(CGFloat)_rotationAngleForCurrentDeviceOrientation {
+    //foo implement this using accelerometer
     switch ([UIDevice currentDevice].orientation) {
         case UIDeviceOrientationPortraitUpsideDown: {
             return M_PI;

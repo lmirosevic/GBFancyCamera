@@ -179,7 +179,6 @@
 			isa = PBXGroup;
 			children = (
 				8A20018417CFAD1C0046E265 /* GBFancyCamera */,
-				8AF64F5F17DCAA5F00E6134F /* Resources */,
 				8AF64F7F17DCAAEB00E6134F /* GBFancyCameraResources */,
 				8A20018117CFAD1B0046E265 /* Frameworks */,
 				8A20018017CFAD1B0046E265 /* Products */,
@@ -215,6 +214,7 @@
 			children = (
 				8A20019A17CFAD6A0046E265 /* Libraries */,
 				8A20019B17CFAD710046E265 /* Code */,
+				8AF64F5F17DCAA5F00E6134F /* Resources */,
 				8A20018517CFAD1C0046E265 /* Supporting Files */,
 			);
 			path = GBFancyCamera;
@@ -248,12 +248,12 @@
 		8A20019B17CFAD710046E265 /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				8A72436317DA3F3C00071E46 /* UIImage+GBFancyCamera.h */,
-				8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */,
 				8A20018717CFAD1C0046E265 /* GBFancyCamera.h */,
 				8A20018917CFAD1C0046E265 /* GBFancyCamera.m */,
 				8A72428017D9DEED00071E46 /* GBFancyCameraFilterProtocol.h */,
 				8A00D71017D9ABF2003DC60C /* GBFancyCameraFilters.h */,
+				8A72436317DA3F3C00071E46 /* UIImage+GBFancyCamera.h */,
+				8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */,
 				8AF650FB17DCB5A500E6134F /* Filters */,
 			);
 			name = Code;
@@ -267,7 +267,6 @@
 				8AF64F6217DCAAA800E6134F /* Filters */,
 			);
 			name = Resources;
-			path = GBFancyCamera;
 			sourceTree = "<group>";
 		};
 		8AF64F6217DCAAA800E6134F /* Filters */ = {
