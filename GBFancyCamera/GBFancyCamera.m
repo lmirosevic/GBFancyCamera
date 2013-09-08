@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-//foo make sure sizing is correct that comes out
 //foo dont forget bundles for assets like images and translation strings
+//foo dont forget translation strings
 
 #import "GBFancyCamera.h"
 
@@ -87,6 +87,10 @@ typedef enum {
     GBFancyCameraStateCapturing,
     GBFancyCameraStateFilters
 } GBFancyCameraState;
+
+static inline NSString *BundledResource(NSString *resourceName) {
+    return [@"GBFancyCameraResources.bundle" stringByAppendingPathComponent:resourceName];
+}
 
 @protocol GBFilterViewDelegate;
 
@@ -241,8 +245,8 @@ typedef enum {
         [self addSubview:self.titleLabel];
         
         //set images
-        self.backgroundImageWhenSelected = [UIImage imageNamed:@"fancy-camera-filter-background-on"];
-        self.backgroundImageWhenDeselected = [UIImage imageNamed:@"fancy-camera-filter-background-off"];
+        self.backgroundImageWhenSelected = [UIImage imageNamed:BundledResource(@"fancy-camera-filter-background-on")];
+        self.backgroundImageWhenDeselected = [UIImage imageNamed:BundledResource(@"fancy-camera-filter-background-off")];
         
         //default selection
         self.isSelected = NO;
@@ -400,14 +404,14 @@ typedef enum {
                                                                                 0,
                                                                                 self.barContainerView.bounds.size.width,
                                                                                 self.barContainerView.bounds.size.height)];
-    self.barBackgroundImageView.image = [[UIImage imageNamed:@"fancy-camera-bar"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+    self.barBackgroundImageView.image = [[UIImage imageNamed:BundledResource(@"fancy-camera-bar")] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     self.barBackgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     [self.barContainerView addSubview:self.barBackgroundImageView];
 
     //cancel button
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.cancelButton addTarget:self action:@selector(cancelAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *cancelImage = [UIImage imageNamed:@"fancy-camera-bar-button-icon-cancel"];
+    UIImage *cancelImage = [UIImage imageNamed:BundledResource(@"fancy-camera-bar-button-icon-cancel")];
     CGSize cancelButtonSize = CGSizeMake(cancelImage.size.width + kBarButtonsFanoutRadius * 2,
                                    cancelImage.size.height + kBarButtonsFanoutRadius * 2);
     self.cancelButton.frame = CGRectMake(kCancelButtonLeftCenterMargin - cancelButtonSize.width / 2,
@@ -421,7 +425,7 @@ typedef enum {
     //camera roll button
     self.cameraRollButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.cameraRollButton addTarget:self action:@selector(cameraRollAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *cameraRollImage = [UIImage imageNamed:@"fancy-camera-bar-button-icon-camera-roll"];
+    UIImage *cameraRollImage = [UIImage imageNamed:BundledResource(@"fancy-camera-bar-button-icon-camera-roll")];
     CGSize cameraRollButtonSize = CGSizeMake(cameraRollImage.size.width + kBarButtonsFanoutRadius * 2,
                                              cameraRollImage.size.height + kBarButtonsFanoutRadius * 2);
     self.cameraRollButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kCameraRollButtonRightCenterMargin + cameraRollButtonSize.width / 2),
@@ -435,7 +439,7 @@ typedef enum {
     //main button
     self.mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.mainButton addTarget:self action:@selector(mainAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *mainButtonMainImage = [UIImage imageNamed:@"fancy-camera-snap-button"];
+    UIImage *mainButtonMainImage = [UIImage imageNamed:BundledResource(@"fancy-camera-snap-button")];
     CGSize mainButtonSize = CGSizeMake(mainButtonMainImage.size.width + kMainButtonFanoutRadius * 2,
                                        mainButtonMainImage.size.height + kMainButtonFanoutRadius * 2);
     self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - mainButtonSize.width) / 2,
@@ -450,7 +454,7 @@ typedef enum {
     //retake button
     self.retakeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.retakeButton addTarget:self action:@selector(retakeAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIImage *retakeImage = [UIImage imageNamed:@"fancy-camera-bar-button-icon-retake"];
+    UIImage *retakeImage = [UIImage imageNamed:BundledResource(@"fancy-camera-bar-button-icon-retake")];
     CGSize retakeButtonSize = CGSizeMake(retakeImage.size.width + kBarButtonsFanoutRadius * 2,
                                          retakeImage.size.height + kBarButtonsFanoutRadius * 2);
     self.retakeButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kRetakeButtonRightCenterMargin + retakeButtonSize.width / 2),
@@ -474,7 +478,7 @@ typedef enum {
                                                                                 0,
                                                                                 self.filtersContainerView.bounds.size.width,
                                                                                 self.filtersContainerView.bounds.size.height)];
-    self.filtersBackgroundImageView.image = [[UIImage imageNamed:@"fancy-camera-mesh-bar"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+    self.filtersBackgroundImageView.image = [[UIImage imageNamed:BundledResource(@"fancy-camera-mesh-bar")] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     self.filtersBackgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     [self.filtersContainerView addSubview:self.filtersBackgroundImageView];
     
@@ -812,7 +816,7 @@ typedef enum {
                                                             self.livePreviewView.frame.size.height);
                     
                     //main button
-                    [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-camera"] forState:UIControlStateNormal];
+                    [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-camera")] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
                                                        (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
                                                        self.mainButton.frame.size.width,
@@ -843,7 +847,7 @@ typedef enum {
                                                             self.livePreviewView.frame.size.height);
                     
                     //main button
-                    [self.mainButton setImage:[UIImage imageNamed:@"fancy-camera-snap-button-icon-tick"] forState:UIControlStateNormal];
+                    [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-tick")] forState:UIControlStateNormal];
                     self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
                                                        (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
                                                        self.mainButton.frame.size.width,
@@ -924,7 +928,6 @@ typedef enum {
 #pragma mark - UIImagePickerControllerDelegate
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    NSLog(@"picked");
     UIImage *image = (UIImage *)[info objectForKey:UIImagePickerControllerOriginalImage];
     
     UIImage *resizedAndRotatedImage = [self _processCameraRollImage:image];
@@ -936,7 +939,6 @@ typedef enum {
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    NSLog(@"cancel");
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     [self.stillCamera resumeCameraCapture];
     self.cameraRollButton.enabled = YES;
