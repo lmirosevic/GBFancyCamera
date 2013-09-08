@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-//foo dont forget bundles for assets like images and translation strings
 //foo dont forget translation strings
 
 #import "GBFancyCamera.h"
@@ -87,10 +86,6 @@ typedef enum {
     GBFancyCameraStateCapturing,
     GBFancyCameraStateFilters
 } GBFancyCameraState;
-
-static inline NSString *BundledResource(NSString *resourceName) {
-    return [@"GBFancyCameraResources.bundle" stringByAppendingPathComponent:resourceName];
-}
 
 @protocol GBFilterViewDelegate;
 
@@ -303,6 +298,16 @@ static inline NSString *BundledResource(NSString *resourceName) {
 
 #pragma mark - Memory
 
+static NSBundle *_resourcesBundle;
++(void)initialize {
+    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"GBFancyCameraResources" ofType:@"bundle"];
+    _resourcesBundle = [NSBundle bundleWithPath:resourceBundlePath];
+}
+
++(NSBundle *)resourcesBundle {
+    return _resourcesBundle;
+}
+
 +(GBFancyCamera *)sharedCamera {
     static GBFancyCamera *_sharedCamera;
     @synchronized(self) {
@@ -316,6 +321,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
 
 -(id)init {
     if (self = [super init]) {
+        //defaults
         self.outputImageResolution = kDefaultOutputImageResolution;
     }
     
@@ -618,8 +624,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
 }
 
 -(void)_handleNoCameraLabel {
-    self.noCameraLabel.text = NSLocalizedString(@"No camera available.\nYou can still use the camera roll.", @"no camera string");
-    
+    self.noCameraLabel.text = NSLocalizedStringFromTableInBundle(@"No camera available.\nYou can still use the camera roll.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string");
     BOOL hasCamera = [self.stillCamera isBackFacingCameraPresent];
     BOOL livePreviewState = (self.state == GBFancyCameraStateCapturing);
     
@@ -667,7 +672,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
         [self _showSystemMediaBrowser];
     }
     else {
-        self.noCameraLabel.text = NSLocalizedString(@"Camera roll not available.", @"camera roll not available");
+        self.noCameraLabel.text = NSLocalizedStringFromTableInBundle(@"Camera roll not available.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"camera roll not available");
     }
 }
 
@@ -866,7 +871,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
                                                                  self.filtersContainerView.frame.size.height);
                     
                     //heading
-                    self.barHeadingLabel.text = NSLocalizedString(@"Filters", @"filters state heading");
+                    self.barHeadingLabel.text = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
                     self.barHeadingLabel.alpha = 1;
                 } completion:nil];
             } break;

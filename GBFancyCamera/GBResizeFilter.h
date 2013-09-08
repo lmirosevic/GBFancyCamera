@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-#import "GPUImage.h"
-
+#import "GBFancyCamera.h"
 #import "GBFancyCameraFilterProtocol.h"
+#import "GPUImage.h"
 
 #define GBResizeFilterUnlimitedResolution CGFLOAT_MAX
 

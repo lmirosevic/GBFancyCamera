@@ -11,3 +11,4 @@
 #import "GBMissEtikateFilter.h"
 #import "GBAmatorkaFilter.h"
 #import "GBSepiaFilter.h"
+#import "GBSoftEleganceFilter.h"

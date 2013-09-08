@@ -20,6 +20,10 @@ typedef enum {
 typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *processedImage, BOOL didTakePhoto, GBFancyCameraSource source, BOOL *shouldAutoDismiss);
 #define GBUnlimitedImageResolution CGFLOAT_MAX
 
+static inline NSString *BundledResource(NSString *resourceName) {
+    return [@"GBFancyCameraResources.bundle" stringByAppendingPathComponent:resourceName];
+}
+
 @protocol GBFanceCameraDelegate;
 
 @interface GBFancyCamera : UIViewController
@@ -35,6 +39,9 @@ typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *pro
 
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;
+
+//resources bundle
++(NSBundle *)resourcesBundle;
 
 //you can create many instances if you need to
 -(id)init;

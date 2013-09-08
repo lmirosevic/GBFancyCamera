@@ -13,7 +13,7 @@
 #pragma mark - GBFancyCameraFilterProtocol
 
 -(NSString *)localisedName {
-    return NSLocalizedString(@"No filter", @"filter name");
+    return NSLocalizedStringFromTableInBundle(@"No filter", @"GBFancyCameraLocalizations", [[GBFancyCamera class] resourcesBundle], @"filter name");
 }
 
 @end

@@ -1,8 +1,8 @@
 //
-//  GBAmatorkaFilter.h
+//  GBSoftEleganceFilter.h
 //  GBFancyCamera
 //
-//  Created by Luka Mirosevic on 06/09/2013.
+//  Created by Luka Mirosevic on 08/09/2013.
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
@@ -10,6 +10,6 @@
 #import "GBFancyCameraFilterProtocol.h"
 #import "GPUImage.h"
 
-@interface GBAmatorkaFilter : GPUImageFilterGroup <GBFancyCameraFilterProtocol>
+@interface GBSoftEleganceFilter : GPUImageFilterGroup <GBFancyCameraFilterProtocol>
 
 @end

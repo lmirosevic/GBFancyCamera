@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-#import "GPUImageMissEtikateFilter.h"
-
+#import "GBFancyCamera.h"
 #import "GBFancyCameraFilterProtocol.h"
+#import "GPUImage.h"
 
-@interface GBMissEtikateFilter : GPUImageMissEtikateFilter <GBFancyCameraFilterProtocol>
+@interface GBMissEtikateFilter : GPUImageFilterGroup <GBFancyCameraFilterProtocol>
 
 @end

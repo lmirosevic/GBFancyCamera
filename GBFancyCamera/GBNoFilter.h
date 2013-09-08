@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-#import "GPUImageFilter.h"
-
+#import "GBFancyCamera.h"
 #import "GBFancyCameraFilterProtocol.h"
+#import "GPUImage.h"
 
 @interface GBNoFilter : GPUImageFilter <GBFancyCameraFilterProtocol>
 

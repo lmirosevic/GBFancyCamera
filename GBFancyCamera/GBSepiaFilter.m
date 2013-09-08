@@ -13,7 +13,7 @@
 #pragma mark - GBFancyCameraFilterProtocol
 
 -(NSString *)localisedName {
-    return NSLocalizedString(@"Sepia", @"filter name");
+    return NSLocalizedStringFromTableInBundle(@"Sepia", @"GBFancyCameraLocalizations", [[GBFancyCamera class] resourcesBundle], @"filter name");
 }
 
 @end

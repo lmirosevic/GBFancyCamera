@@ -45,7 +45,7 @@
 #pragma mark - GBFancyCameraFilterProtocol
 
 -(NSString *)localisedName {
-    return NSLocalizedString(@"Resizer", @"filter name");
+    return NSLocalizedStringFromTableInBundle(@"Resizer", @"GBFancyCameraLocalizations", [[GBFancyCamera class] resourcesBundle], @"filter name");
 }
 
 #pragma mark - mem
