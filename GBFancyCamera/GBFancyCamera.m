@@ -6,9 +6,16 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
+//foo make sure sizing is correct that comes out
+//foo dont forget bundles for assets like images and translation strings
+
 #import "GBFancyCamera.h"
 
+//image library import
 #import "GPUImage.h"
+
+//system library imports
+#import <QuartzCore/QuartzCore.h>
 
 //image manipulation imports
 #import "UIImage+Rotating.h"//foo temp
@@ -47,7 +54,7 @@ static CGFloat const kThumbnailBackgroundImageTopCenterMargin =     30;
 
 static CGSize const kThumbnailImageSize =                           (CGSize){56, 56};
 static CGFloat const kThumbnailImageTopCenterMargin =               30;
-static CGFloat const kThumbnailImageCornerRadius =                  4;
+static CGFloat const kThumbnailImageCornerRadius =                  3;
 
 static CGFloat const kFilterNameTopCenterMargin =                   68;
 static CGSize const kFilterNameShadowOffset =                       (CGSize){0, 1};
@@ -217,7 +224,8 @@ typedef enum {
         self.imageView.clipsToBounds = YES;
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         self.imageView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        //foo rounded corners
+        self.imageView.layer.cornerRadius = kThumbnailImageCornerRadius;
+        self.imageView.layer.masksToBounds = YES;
         [self addSubview:self.imageView];
         
         //title label
@@ -289,10 +297,6 @@ typedef enum {
 @end
 
 @implementation GBFancyCamera
-
-//foo needs to handle case where there is no camera (e.g. simulator)
-//up would be nice to be able to switch camera and turn on flash
-//foo dont forget bundles for assets like images and translation strings
 
 #pragma mark - Memory
 
@@ -507,7 +511,6 @@ typedef enum {
     self.noCameraLabel.backgroundColor = [UIColor clearColor];
     self.noCameraLabel.textAlignment = NSTextAlignmentCenter;
     self.noCameraLabel.numberOfLines = 8;
-    self.noCameraLabel.text = NSLocalizedString(@"No camera available.\nYou can still use the camera roll.", @"no camera string");
     self.noCameraLabel.font = kNoCameraLabelFont;
     self.noCameraLabel.textColor = kNoCameraLabelTextColor;
     [self.view addSubview:self.noCameraLabel];
@@ -612,6 +615,8 @@ typedef enum {
 }
 
 -(void)_handleNoCameraLabel {
+    self.noCameraLabel.text = NSLocalizedString(@"No camera available.\nYou can still use the camera roll.", @"no camera string");
+    
     BOOL hasCamera = [self.stillCamera isBackFacingCameraPresent];
     BOOL livePreviewState = (self.state == GBFancyCameraStateCapturing);
     
@@ -622,13 +627,12 @@ typedef enum {
 
 -(void)_finishedProcessingPhoto {
     self.processedImage = [self.currentFilter imageByFilteringImage:self.originalImage];
-    [self _returnControlCancelled:NO];
+    [self _returnControlSuccessfulCapture:YES];
     [self _cleanupHeavyStuff];
 }
 
 -(void)_cancel {
-    //foo refactor to be successfulCapture:NO
-    [self _returnControlCancelled:YES];
+    [self _returnControlSuccessfulCapture:NO];
     [self _cleanupHeavyStuff];
 }
 
@@ -660,7 +664,7 @@ typedef enum {
         [self _showSystemMediaBrowser];
     }
     else {
-        //foo show some error
+        self.noCameraLabel.text = NSLocalizedString(@"Camera roll not available.", @"camera roll not available");
     }
 }
 
@@ -761,14 +765,14 @@ typedef enum {
     self.filterViews = nil;
 }
 
--(void)_returnControlCancelled:(BOOL)cancelled {
+-(void)_returnControlSuccessfulCapture:(BOOL)succesfulCapture {
     //call delegate methods
     if (self.delegate) {
-        if (cancelled) {
-            [self.delegate fancyCameraDidCancelTakingPhoto:self];
+        if (succesfulCapture) {
+            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:self.imageSource];
         }
         else {
-            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:self.imageSource];
+            [self.delegate fancyCameraDidCancelTakingPhoto:self];
         }
     }
     
@@ -776,12 +780,11 @@ typedef enum {
     if (self.completionBlock) {
         BOOL shouldDismiss = kDefaultShouldAutoDismiss;
         
-        if (cancelled) {
-            self.completionBlock(nil, nil, NO, GBFancyCameraSourceNone, &shouldDismiss);
+        if (succesfulCapture) {
+            self.completionBlock(self.originalImage, self.processedImage, YES, self.imageSource, &shouldDismiss);
         }
         else {
-            //foo sellvc should check to make sure didTakePhoto says yes
-            self.completionBlock(self.originalImage, self.processedImage, YES, self.imageSource, &shouldDismiss);
+            self.completionBlock(nil, nil, NO, GBFancyCameraSourceNone, &shouldDismiss);
         }
         self.completionBlock = nil;
         
