@@ -6,12 +6,13 @@
 //  Copyright (c) 2013 Goonbee. All rights reserved.
 //
 
-//foo dont forget translation strings
-
 #import "GBFancyCamera.h"
 
 //image library import
 #import "GPUImage.h"
+
+//motion imports
+#import "GBMotion.h"
 
 //system library imports
 #import <QuartzCore/QuartzCore.h>
@@ -152,6 +153,9 @@ typedef enum {
 @property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
 @property (strong, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>        *currentFilter;
 @property (weak, nonatomic) GPUImageFilter                                                      *liveEgressMain;
+
+@property (strong, nonatomic) GBMotionGestureHandler                                            orientationHandler;
+@property (assign, nonatomic) GBMotionDeviceOrientation                                         deviceOrientation;
 
 @end
 
@@ -296,6 +300,26 @@ typedef enum {
 
 @implementation GBFancyCamera
 
+#pragma mark - CA
+
+-(GBMotionGestureHandler)orientationHandler {
+    if (!_orientationHandler) {
+        __weak GBFancyCamera *weakSelf = self;
+        _orientationHandler = ^(GBMotionGesture gesture, NSDictionary *info) {
+            if (gesture == GBMotionGestureChangedDeviceOrientation) {
+                weakSelf.deviceOrientation = (GBMotionDeviceOrientation)[info[kGBMotionDeviceOrientationKey] intValue];
+                if (weakSelf.state == GBFancyCameraStateCapturing) {
+                    [UIView animateWithDuration:0.1 animations:^{
+                        weakSelf.mainButton.transform = CGAffineTransformMakeRotation([weakSelf _rotationAngleForCurrentDeviceOrientation]);
+                    }];
+                }
+            }
+        };
+    }
+    
+    return _orientationHandler;
+}
+
 #pragma mark - Memory
 
 static NSBundle *_resourcesBundle;
@@ -364,9 +388,6 @@ static NSBundle *_resourcesBundle;
 
 -(void)viewDidLoad {
     [super viewDidLoad];
-
-    //device orientation detection
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     
     //full screen stuff
     self.view.backgroundColor = [UIColor blackColor];
@@ -381,7 +402,7 @@ static NSBundle *_resourcesBundle;
                                       self.view.bounds.size.height - (kCameraViewportPadding.top + kCameraViewportPadding.bottom));
     self.livePreviewView = [[GPUImageView alloc] initWithFrame:viewPortFrame];
     self.livePreviewView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        
+    
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
     self.stillCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
 
@@ -528,6 +549,9 @@ static NSBundle *_resourcesBundle;
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    self.deviceOrientation = [GBMotion sharedMotion].deviceOrientation;
+    [[GBMotion sharedMotion] addHandler:self.orientationHandler];
+    
     if (!self.presentedViewController) {
         //internal state
         self.isPresented = YES;
@@ -555,6 +579,8 @@ static NSBundle *_resourcesBundle;
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
+    [[GBMotion sharedMotion] removeHandler:self.orientationHandler];
     
     if (!self.presentedViewController) {
         //show the status bar, but only if it was previously shown
@@ -599,22 +625,21 @@ static NSBundle *_resourcesBundle;
 #pragma mark - util
 
 -(CGFloat)_rotationAngleForCurrentDeviceOrientation {
-    //foo implement this using accelerometer
-    switch ([UIDevice currentDevice].orientation) {
-        case UIDeviceOrientationPortraitUpsideDown: {
+    switch (self.deviceOrientation) {
+        case GBMotionDeviceOrientationPortraitUpsideDown: {
             return M_PI;
         } break;
             
-        case UIDeviceOrientationLandscapeRight: {
-            return -M_PI_2;
-        } break;
-            
-        case UIDeviceOrientationLandscapeLeft: {
+        case GBMotionDeviceOrientationLandscapeRight: {
             return M_PI_2;
         } break;
             
-        case UIDeviceOrientationPortrait:
-        default: {
+        case GBMotionDeviceOrientationLandscapeLeft: {
+            return -M_PI_2;
+        } break;
+            
+        case GBMotionDeviceOrientationPortrait:
+        case GBMotionDeviceOrientationUnknown: {
             return 0;
         } break;
     }
@@ -814,6 +839,10 @@ static NSBundle *_resourcesBundle;
         NSTimeInterval duration = animated ? kStateTransitionAnimationDuration : 0;
         switch (state) {
             case GBFancyCameraStateCapturing: {
+                //rotate button back to device orientation
+                self.mainButton.transform = CGAffineTransformMakeRotation([self _rotationAngleForCurrentDeviceOrientation]);
+
+                //animations
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //viewport
                     self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
@@ -845,6 +874,10 @@ static NSBundle *_resourcesBundle;
             } break;
                 
             case GBFancyCameraStateFilters: {
+                //rotate button to defailt
+                self.mainButton.transform = CGAffineTransformIdentity;
+                
+                //animations
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //viewport
                     self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
