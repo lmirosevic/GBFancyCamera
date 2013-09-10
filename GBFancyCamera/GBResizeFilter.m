@@ -72,7 +72,6 @@
 }
 
 -(void)_commonResizeFilterInit {
-//    self.shouldSmoothlyScaleOutput = YES;//foo
 }
 
 @end
