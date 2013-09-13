@@ -660,7 +660,7 @@ static NSBundle *_resourcesBundle;
 }
 
 -(void)_finishedProcessingPhoto {
-    self.processedImage = [self.currentFilter imageByFilteringImage:self.originalImage];
+    self.processedImage = [self.currentFilter imageFromCurrentlyProcessedOutput];
     [self _returnControlSuccessfulCapture:YES];
     [self _cleanupHeavyStuff];
 }
