@@ -153,6 +153,7 @@ typedef enum {
 @property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
 @property (strong, nonatomic) GPUImageOutput<GPUImageInput, GBFancyCameraFilterProtocol>        *currentFilter;
 @property (weak, nonatomic) GPUImageFilter                                                      *liveEgressMain;
+@property (strong, nonatomic) GPUImagePicture                                                   *imagePic;
 
 @property (strong, nonatomic) GBMotionGestureHandler                                            orientationHandler;
 @property (assign, nonatomic) GBMotionDeviceOrientation                                         deviceOrientation;
@@ -659,7 +660,7 @@ static NSBundle *_resourcesBundle;
     self.noCameraLabel.hidden = !showNoCameraLabel;
 }
 
--(void)_finishedProcessingPhoto {
+-(void)_acceptPhoto {
     self.processedImage = [self.currentFilter imageFromCurrentlyProcessedOutput];
     [self _returnControlSuccessfulCapture:YES];
     [self _cleanupHeavyStuff];
@@ -705,17 +706,6 @@ static NSBundle *_resourcesBundle;
 -(void)_retake {
     //cleanup heavy
     [self _cleanupHeavyStuff];
-    
-    //griz clear live preview view
-    [self.livePreviewView setNeedsDisplay];
-    
-    //reset output if camera isn't available (if one is available, then the new camera feed will purge whats in there currently, if there is no camera feed however, then we need to manually clear it by pushing through a black image)
-    if (![self.stillCamera isBackFacingCameraPresent]) {
-        GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:[UIImage imageWithSolidColor:[UIColor blackColor]]];
-        [pic addTarget:self.livePreviewView];
-        [pic processImage];
-        [pic removeAllTargets];
-    }
     
     //reconnect live feed
     [self.liveEgressMain addTarget:self.livePreviewView];
@@ -785,11 +775,11 @@ static NSBundle *_resourcesBundle;
     self.currentFilter = filterObject;
     [self.liveEgressMain removeAllTargets];
     
-    GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
-    [pic addTarget:filterObject];
+    self.imagePic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
+    [self.imagePic addTarget:filterObject];
     [filterObject addTarget:self.livePreviewView];
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
-    [pic processImage];
+    [self.imagePic processImage];
 }
 
 -(void)_destroyFilterViews {
@@ -923,11 +913,23 @@ static NSBundle *_resourcesBundle;
     //ditch all hight memory stuff
     self.originalImage = nil;
     self.processedImage = nil;
+    self.imagePic = nil;
     
     [self.currentFilter removeAllTargets];
     self.currentFilter = nil;
 
     [self _destroyFilterViews];
+    
+    //clear live preview view
+    [self.livePreviewView setNeedsDisplay];
+    
+    //reset output if camera isn't available (if one is available, then the new camera feed will purge whats in there currently, if there is no camera feed however, then we need to manually clear it by pushing through a black image)
+    if (![self.stillCamera isBackFacingCameraPresent]) {
+        GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:[UIImage imageWithSolidColor:[UIColor blackColor]]];
+        [pic addTarget:self.livePreviewView];
+        [pic processImage];
+        [pic removeAllTargets];
+    }
 }
 
 -(UIImage *)_processCameraRollImage:(UIImage *)originalImage {
@@ -1012,7 +1014,7 @@ static NSBundle *_resourcesBundle;
         [self _capturePhoto];
     }
     else {
-        [self _finishedProcessingPhoto];
+        [self _acceptPhoto];
     }
 }
 
