@@ -678,6 +678,7 @@ static NSBundle *_resourcesBundle;
         
         //camera capture
         [self.stillCamera pauseCameraCapture];
+        [self.stillCamera prepareForImageCapture];
         
         //take photo
         [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
@@ -778,6 +779,7 @@ static NSBundle *_resourcesBundle;
     self.imagePic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
     [self.imagePic addTarget:filterObject];
     [filterObject addTarget:self.livePreviewView];
+    [filterObject prepareForImageCapture];
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
     [self.imagePic processImage];
 }
