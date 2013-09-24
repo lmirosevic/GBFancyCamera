@@ -43,7 +43,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
 //resources bundle
 +(NSBundle *)resourcesBundle;
 
-//you can create many instances if you need to
+//you can create fresh instances if you need to
 -(id)init;
 
 //block based photo snapping. will present the UI onto [[UIApplication sharedApplication].keyWindow.rootViewController if it isn't presented yet
