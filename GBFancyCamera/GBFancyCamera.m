@@ -964,6 +964,11 @@ static NSBundle *_resourcesBundle;
     mediaUI.allowsEditing = NO;
     mediaUI.delegate = self;
     
+    //iOS 7 (handle color of status bar
+    if ([UIDevice currentDevice].systemVersion.floatValue >= 7.0) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    }
+    
     [self.stillCamera pauseCameraCapture];
     [self presentViewController:mediaUI animated:YES completion:nil];
 }
@@ -979,12 +984,20 @@ static NSBundle *_resourcesBundle;
     
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     self.cameraRollButton.enabled = YES;
+    
+    if ([UIDevice currentDevice].systemVersion.floatValue >= 7.0) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    }
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     [self.stillCamera resumeCameraCapture];
     self.cameraRollButton.enabled = YES;
+
+    if ([UIDevice currentDevice].systemVersion.floatValue >= 7.0) {
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    }
 }
 
 #pragma mark - GBFilterViewDelegate
