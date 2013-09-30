@@ -17,7 +17,7 @@ typedef enum {
     GBFancyCameraSourceCameraRoll,
 } GBFancyCameraSource;
 
-typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *processedImage, BOOL didTakePhoto, GBFancyCameraSource source, BOOL *shouldAutoDismiss);
+typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *processedImage, BOOL didTakePhoto, GBFancyCameraSource source, Class filterClass, BOOL *shouldAutoDismiss);
 #define GBUnlimitedImageResolution CGFLOAT_MAX
 
 static inline NSString *BundledResource(NSString *resourceName) {
@@ -53,7 +53,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
 
 @protocol GBFanceCameraDelegate <NSObject>
 
--(void)fancyCamera:(GBFancyCamera *)fancyCamera didTakePhotoWithOriginalImage:(UIImage *)originalImage processedImage:(UIImage *)processedImage fromSource:(GBFancyCameraSource)source;
+-(void)fancyCamera:(GBFancyCamera *)fancyCamera didTakePhotoWithOriginalImage:(UIImage *)originalImage processedImage:(UIImage *)processedImage fromSource:(GBFancyCameraSource)source filterClass:(Class)filterClass;
 -(void)fancyCameraDidCancelTakingPhoto:(GBFancyCamera *)fancyCamera;
 
 @end

@@ -795,7 +795,7 @@ static NSBundle *_resourcesBundle;
     //call delegate methods
     if (self.delegate) {
         if (succesfulCapture) {
-            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:self.imageSource];
+            [self.delegate fancyCamera:self didTakePhotoWithOriginalImage:self.originalImage processedImage:self.processedImage fromSource:self.imageSource filterClass:self.currentFilter.class];
         }
         else {
             [self.delegate fancyCameraDidCancelTakingPhoto:self];
@@ -807,10 +807,10 @@ static NSBundle *_resourcesBundle;
         BOOL shouldDismiss = kDefaultShouldAutoDismiss;
         
         if (succesfulCapture) {
-            self.completionBlock(self.originalImage, self.processedImage, YES, self.imageSource, &shouldDismiss);
+            self.completionBlock(self.originalImage, self.processedImage, YES, self.imageSource, self.currentFilter.class, &shouldDismiss);
         }
         else {
-            self.completionBlock(nil, nil, NO, GBFancyCameraSourceNone, &shouldDismiss);
+            self.completionBlock(nil, nil, NO, GBFancyCameraSourceNone, nil, &shouldDismiss);
         }
         self.completionBlock = nil;
         
