@@ -390,6 +390,9 @@ static NSBundle *_resourcesBundle;
 -(void)viewDidLoad {
     [super viewDidLoad];
     
+    //clipping must be on because live preview view can sometimes spill
+    self.view.clipsToBounds = YES;
+    
     //full screen stuff
     self.view.backgroundColor = [UIColor blackColor];
     self.wantsFullScreenLayout = YES;
