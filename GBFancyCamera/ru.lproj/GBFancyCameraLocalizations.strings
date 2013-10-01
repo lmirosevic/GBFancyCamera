@@ -1,0 +1,26 @@
+/* camera roll not available */
+"Camera roll not available." = "Фотопленка  не доступна.";
+
+/* filters state heading */
+"Filters" = "Фильтры";
+
+/* no camera string */
+"No camera available.\nYou can still use the camera roll." = "Камера недоступна.\Ты можеш использовать фотопленку ";
+
+/* filter name */
+"No filter" = "Без фильтра";
+
+/* filter name */
+"Elegance" = "Утонченность";
+
+/* filter name */
+"Sepia" = "Сепия";
+
+/* filter name */
+"Amatorka" = "Amatorka";
+
+/* filter name */
+"Etikate" = "Etikate";
+
+/* filter name */
+"Resize" = "Изменить размер";

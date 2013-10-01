@@ -16,6 +16,7 @@
 		8A2001F517CFB0A80046E265 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F417CFB0A80046E265 /* OpenGLES.framework */; };
 		8A2001F717CFB0B00046E265 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F617CFB0B00046E265 /* AVFoundation.framework */; };
 		8A2001F917CFB0B50046E265 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2001F817CFB0B50046E265 /* QuartzCore.framework */; };
+		8A4BDFAD17FB121A00089030 /* GBFancyCameraLocalizations.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8A4BDFAF17FB121A00089030 /* GBFancyCameraLocalizations.strings */; };
 		8A72428517D9DFCA00071E46 /* GBMissEtikateFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72428417D9DFCA00071E46 /* GBMissEtikateFilter.m */; };
 		8A72428817D9E02500071E46 /* GBAmatorkaFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72428717D9E02500071E46 /* GBAmatorkaFilter.m */; };
 		8A7242F417D9FA2F00071E46 /* GBSepiaFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7242F317D9FA2F00071E46 /* GBSepiaFilter.m */; };
@@ -48,7 +49,6 @@
 		8AF6510117DCB64F00E6134F /* lookup_miss_etikate.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FD17DCB64F00E6134F /* lookup_miss_etikate.png */; };
 		8AF6510217DCB64F00E6134F /* lookup_soft_elegance_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FE17DCB64F00E6134F /* lookup_soft_elegance_1.png */; };
 		8AF6510317DCB64F00E6134F /* lookup_soft_elegance_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FF17DCB64F00E6134F /* lookup_soft_elegance_2.png */; };
-		8AF6510617DCBAEF00E6134F /* GBFancyCameraLocalizations.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8AF6510517DCBAEF00E6134F /* GBFancyCameraLocalizations.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +110,8 @@
 		8A2001F417CFB0A80046E265 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		8A2001F617CFB0B00046E265 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8A2001F817CFB0B50046E265 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8A4BDFAE17FB121A00089030 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
+		8A4BDFB317FB123600089030 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file; name = ru; path = ru.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
 		8A6E409D17DDECF900FA86B9 /* GBMotion.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GBMotion.xcodeproj; path = ../../GBMotion/GBMotion.xcodeproj; sourceTree = "<group>"; };
 		8A72428017D9DEED00071E46 /* GBFancyCameraFilterProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GBFancyCameraFilterProtocol.h; sourceTree = "<group>"; };
 		8A72428317D9DFCA00071E46 /* GBMissEtikateFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBMissEtikateFilter.h; sourceTree = "<group>"; };
@@ -154,7 +156,6 @@
 		8AF650FD17DCB64F00E6134F /* lookup_miss_etikate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_miss_etikate.png; sourceTree = "<group>"; };
 		8AF650FE17DCB64F00E6134F /* lookup_soft_elegance_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_soft_elegance_1.png; sourceTree = "<group>"; };
 		8AF650FF17DCB64F00E6134F /* lookup_soft_elegance_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_soft_elegance_2.png; sourceTree = "<group>"; };
-		8AF6510517DCBAEF00E6134F /* GBFancyCameraLocalizations.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -364,7 +365,7 @@
 		8AF6510417DCBADF00E6134F /* Strings */ = {
 			isa = PBXGroup;
 			children = (
-				8AF6510517DCBAEF00E6134F /* GBFancyCameraLocalizations.strings */,
+				8A4BDFAF17FB121A00089030 /* GBFancyCameraLocalizations.strings */,
 			);
 			name = Strings;
 			sourceTree = "<group>";
@@ -433,6 +434,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				ru,
 			);
 			mainGroup = 8A20017617CFAD1B0046E265;
 			productRefGroup = 8A20018017CFAD1B0046E265 /* Products */;
@@ -508,7 +510,7 @@
 				8AF6510117DCB64F00E6134F /* lookup_miss_etikate.png in Resources */,
 				8AF6510217DCB64F00E6134F /* lookup_soft_elegance_1.png in Resources */,
 				8AF6510317DCB64F00E6134F /* lookup_soft_elegance_2.png in Resources */,
-				8AF6510617DCBAEF00E6134F /* GBFancyCameraLocalizations.strings in Resources */,
+				8A4BDFAD17FB121A00089030 /* GBFancyCameraLocalizations.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,6 +550,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		8A4BDFAF17FB121A00089030 /* GBFancyCameraLocalizations.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8A4BDFAE17FB121A00089030 /* en */,
+				8A4BDFB317FB123600089030 /* ru */,
+			);
+			name = GBFancyCameraLocalizations.strings;
+			sourceTree = "<group>";
+		};
 		8AF64F8217DCAAEB00E6134F /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
