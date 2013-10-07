@@ -142,6 +142,8 @@ typedef enum {
 
 @property (assign, nonatomic) BOOL                                                              isPresented;
 
+@property (assign, nonatomic) BOOL                                                              wasCapturingBeforeResignActive;
+
 @property (copy, nonatomic) GBFancyCameraCompletionBlock                                        completionBlock;
 
 @property (strong, nonatomic) UIImage                                                           *originalImage;
@@ -548,6 +550,10 @@ static NSBundle *_resourcesBundle;
     self.noCameraLabel.font = kNoCameraLabelFont;
     self.noCameraLabel.textColor = kNoCameraLabelTextColor;
     [self.view addSubview:self.noCameraLabel];
+    
+    //capture pausing when going to background
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:NULL];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:NULL];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -608,7 +614,6 @@ static NSBundle *_resourcesBundle;
 }
 
 -(void)dealloc {
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.stillCamera stopCameraCapture];
     [self _cleanupHeavyStuff];
@@ -1015,6 +1020,22 @@ static NSBundle *_resourcesBundle;
 
     //create filter
     [self _applyFilterWithClass:filterView.filterClass];
+}
+
+#pragma mark - App resign/restore active hooks
+
+-(void)applicationWillResignActive {
+    self.wasCapturingBeforeResignActive = self.stillCamera.isCapturing;
+    
+    if (self.stillCamera.isCapturing) {
+        [self.stillCamera pauseCameraCapture];
+    }
+}
+
+-(void)applicationDidBecomeActive {
+    if (self.wasCapturingBeforeResignActive && !self.stillCamera.isCapturing) {
+        [self.stillCamera resumeCameraCapture];
+    }
 }
 
 #pragma mark - Actions
