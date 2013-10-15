@@ -73,6 +73,13 @@
 			remoteGlobalIDString = BCF1A33314DDB1EC00852800;
 			remoteInfo = GPUImage;
 		};
+		8A23F360180D413F00378A99 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A6E409D17DDECF900FA86B9 /* GBMotion.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8A6E408817DDEC4900FA86B9;
+			remoteInfo = GBMotion;
+		};
 		8A6E40A117DDECF900FA86B9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A6E409D17DDECF900FA86B9 /* GBMotion.xcodeproj */;
@@ -110,8 +117,8 @@
 		8A2001F417CFB0A80046E265 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		8A2001F617CFB0B00046E265 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8A2001F817CFB0B50046E265 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		8A4BDFAE17FB121A00089030 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
-		8A4BDFB317FB123600089030 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file; name = ru; path = ru.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
+		8A4BDFAE17FB121A00089030 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
+		8A4BDFB317FB123600089030 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
 		8A6E409D17DDECF900FA86B9 /* GBMotion.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GBMotion.xcodeproj; path = ../../GBMotion/GBMotion.xcodeproj; sourceTree = "<group>"; };
 		8A72428017D9DEED00071E46 /* GBFancyCameraFilterProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GBFancyCameraFilterProtocol.h; sourceTree = "<group>"; };
 		8A72428317D9DFCA00071E46 /* GBMissEtikateFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBMissEtikateFilter.h; sourceTree = "<group>"; };
@@ -395,6 +402,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8A23F361180D413F00378A99 /* PBXTargetDependency */,
 				8A20019D17CFAD7E0046E265 /* PBXTargetDependency */,
 			);
 			name = GBFancyCamera;
@@ -546,6 +554,11 @@
 			isa = PBXTargetDependency;
 			name = GPUImage;
 			targetProxy = 8A20019C17CFAD7E0046E265 /* PBXContainerItemProxy */;
+		};
+		8A23F361180D413F00378A99 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = GBMotion;
+			targetProxy = 8A23F360180D413F00378A99 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
