@@ -22,33 +22,33 @@
 		8A7242F417D9FA2F00071E46 /* GBSepiaFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7242F317D9FA2F00071E46 /* GBSepiaFilter.m */; };
 		8A7242FC17DA002A00071E46 /* GBNoFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7242FB17DA002A00071E46 /* GBNoFilter.m */; };
 		8A72436517DA3F3D00071E46 /* UIImage+GBFancyCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */; };
+		8AD1F8D9180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8C5180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll.png */; };
+		8AD1F8DA180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8C6180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll@2x.png */; };
+		8AD1F8DB180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8C7180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel.png */; };
+		8AD1F8DC180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8C8180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel@2x.png */; };
+		8AD1F8DD180E69FB00E1029C /* fancy-camera-bar-button-icon-retake.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8C9180E69FB00E1029C /* fancy-camera-bar-button-icon-retake.png */; };
+		8AD1F8DE180E69FB00E1029C /* fancy-camera-bar-button-icon-retake@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8CA180E69FB00E1029C /* fancy-camera-bar-button-icon-retake@2x.png */; };
+		8AD1F8DF180E69FB00E1029C /* fancy-camera-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8CB180E69FB00E1029C /* fancy-camera-bar.png */; };
+		8AD1F8E0180E69FB00E1029C /* fancy-camera-bar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8CC180E69FB00E1029C /* fancy-camera-bar@2x.png */; };
+		8AD1F8E1180E69FB00E1029C /* fancy-camera-filter-background-off.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8CD180E69FB00E1029C /* fancy-camera-filter-background-off.png */; };
+		8AD1F8E2180E69FB00E1029C /* fancy-camera-filter-background-off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8CE180E69FB00E1029C /* fancy-camera-filter-background-off@2x.png */; };
+		8AD1F8E3180E69FB00E1029C /* fancy-camera-filter-background-on.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8CF180E69FB00E1029C /* fancy-camera-filter-background-on.png */; };
+		8AD1F8E4180E69FB00E1029C /* fancy-camera-filter-background-on@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D0180E69FB00E1029C /* fancy-camera-filter-background-on@2x.png */; };
+		8AD1F8E5180E69FB00E1029C /* fancy-camera-mesh-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D1180E69FB00E1029C /* fancy-camera-mesh-bar.png */; };
+		8AD1F8E6180E69FB00E1029C /* fancy-camera-mesh-bar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D2180E69FB00E1029C /* fancy-camera-mesh-bar@2x.png */; };
+		8AD1F8E7180E69FB00E1029C /* fancy-camera-snap-button-icon-camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D3180E69FB00E1029C /* fancy-camera-snap-button-icon-camera.png */; };
+		8AD1F8E8180E69FB00E1029C /* fancy-camera-snap-button-icon-camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D4180E69FB00E1029C /* fancy-camera-snap-button-icon-camera@2x.png */; };
+		8AD1F8E9180E69FB00E1029C /* fancy-camera-snap-button-icon-tick.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D5180E69FB00E1029C /* fancy-camera-snap-button-icon-tick.png */; };
+		8AD1F8EA180E69FB00E1029C /* fancy-camera-snap-button-icon-tick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D6180E69FB00E1029C /* fancy-camera-snap-button-icon-tick@2x.png */; };
+		8AD1F8EB180E69FB00E1029C /* fancy-camera-snap-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D7180E69FB00E1029C /* fancy-camera-snap-button.png */; };
+		8AD1F8EC180E69FB00E1029C /* fancy-camera-snap-button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8D8180E69FB00E1029C /* fancy-camera-snap-button@2x.png */; };
+		8AD1F8F3180E6A0B00E1029C /* lookup_amatorka.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8EF180E6A0B00E1029C /* lookup_amatorka.png */; };
+		8AD1F8F4180E6A0B00E1029C /* lookup_miss_etikate.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8F0180E6A0B00E1029C /* lookup_miss_etikate.png */; };
+		8AD1F8F5180E6A0B00E1029C /* lookup_soft_elegance_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8F1180E6A0B00E1029C /* lookup_soft_elegance_1.png */; };
+		8AD1F8F6180E6A0B00E1029C /* lookup_soft_elegance_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AD1F8F2180E6A0B00E1029C /* lookup_soft_elegance_2.png */; };
 		8AF64F4717DC7CF400E6134F /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */; };
 		8AF64F7E17DCAAEB00E6134F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF64F7D17DCAAEB00E6134F /* CoreFoundation.framework */; };
-		8AF64F8917DCAB2E00E6134F /* fancy-camera-bar-button-icon-camera-roll.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6417DCAAB800E6134F /* fancy-camera-bar-button-icon-camera-roll.png */; };
-		8AF64F8A17DCAB2E00E6134F /* fancy-camera-bar-button-icon-camera-roll@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6517DCAAB800E6134F /* fancy-camera-bar-button-icon-camera-roll@2x.png */; };
-		8AF64F8B17DCAB2E00E6134F /* fancy-camera-bar-button-icon-cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6617DCAAB800E6134F /* fancy-camera-bar-button-icon-cancel.png */; };
-		8AF64F8C17DCAB2E00E6134F /* fancy-camera-bar-button-icon-cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6717DCAAB900E6134F /* fancy-camera-bar-button-icon-cancel@2x.png */; };
-		8AF64F8D17DCAB2E00E6134F /* fancy-camera-bar-button-icon-retake.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6817DCAAB900E6134F /* fancy-camera-bar-button-icon-retake.png */; };
-		8AF64F8E17DCAB2E00E6134F /* fancy-camera-bar-button-icon-retake@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6917DCAAB900E6134F /* fancy-camera-bar-button-icon-retake@2x.png */; };
-		8AF64F8F17DCAB2E00E6134F /* fancy-camera-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6A17DCAAB900E6134F /* fancy-camera-bar.png */; };
-		8AF64F9017DCAB2E00E6134F /* fancy-camera-bar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6B17DCAAB900E6134F /* fancy-camera-bar@2x.png */; };
-		8AF64F9117DCAB2E00E6134F /* fancy-camera-filter-background-off.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6C17DCAAB900E6134F /* fancy-camera-filter-background-off.png */; };
-		8AF64F9217DCAB2E00E6134F /* fancy-camera-filter-background-off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6D17DCAAB900E6134F /* fancy-camera-filter-background-off@2x.png */; };
-		8AF64F9317DCAB2E00E6134F /* fancy-camera-filter-background-on.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6E17DCAAB900E6134F /* fancy-camera-filter-background-on.png */; };
-		8AF64F9417DCAB2E00E6134F /* fancy-camera-filter-background-on@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F6F17DCAAB900E6134F /* fancy-camera-filter-background-on@2x.png */; };
-		8AF64F9517DCAB2E00E6134F /* fancy-camera-mesh-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7017DCAAB900E6134F /* fancy-camera-mesh-bar.png */; };
-		8AF64F9617DCAB2E00E6134F /* fancy-camera-mesh-bar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7117DCAAB900E6134F /* fancy-camera-mesh-bar@2x.png */; };
-		8AF64F9717DCAB2E00E6134F /* fancy-camera-snap-button-icon-camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7217DCAAB900E6134F /* fancy-camera-snap-button-icon-camera.png */; };
-		8AF64F9817DCAB2E00E6134F /* fancy-camera-snap-button-icon-camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7317DCAAB900E6134F /* fancy-camera-snap-button-icon-camera@2x.png */; };
-		8AF64F9917DCAB2E00E6134F /* fancy-camera-snap-button-icon-tick.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7417DCAAB900E6134F /* fancy-camera-snap-button-icon-tick.png */; };
-		8AF64F9A17DCAB2E00E6134F /* fancy-camera-snap-button-icon-tick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7517DCAAB900E6134F /* fancy-camera-snap-button-icon-tick@2x.png */; };
-		8AF64F9B17DCAB2E00E6134F /* fancy-camera-snap-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7617DCAAB900E6134F /* fancy-camera-snap-button.png */; };
-		8AF64F9C17DCAB2E00E6134F /* fancy-camera-snap-button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF64F7717DCAAB900E6134F /* fancy-camera-snap-button@2x.png */; };
 		8AF650FA17DCB56F00E6134F /* GBSoftEleganceFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF650F917DCB56E00E6134F /* GBSoftEleganceFilter.m */; };
-		8AF6510017DCB64F00E6134F /* lookup_amatorka.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FC17DCB64F00E6134F /* lookup_amatorka.png */; };
-		8AF6510117DCB64F00E6134F /* lookup_miss_etikate.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FD17DCB64F00E6134F /* lookup_miss_etikate.png */; };
-		8AF6510217DCB64F00E6134F /* lookup_soft_elegance_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FE17DCB64F00E6134F /* lookup_soft_elegance_1.png */; };
-		8AF6510317DCB64F00E6134F /* lookup_soft_elegance_2.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF650FF17DCB64F00E6134F /* lookup_soft_elegance_2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,27 +131,31 @@
 		8A7242FB17DA002A00071E46 /* GBNoFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBNoFilter.m; sourceTree = "<group>"; };
 		8A72436317DA3F3C00071E46 /* UIImage+GBFancyCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+GBFancyCamera.h"; sourceTree = "<group>"; };
 		8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+GBFancyCamera.m"; sourceTree = "<group>"; };
+		8AD1F8C5180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar-button-icon-camera-roll.png"; path = "Resources/fancy-camera-bar-button-icon-camera-roll.png"; sourceTree = "<group>"; };
+		8AD1F8C6180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar-button-icon-camera-roll@2x.png"; path = "Resources/fancy-camera-bar-button-icon-camera-roll@2x.png"; sourceTree = "<group>"; };
+		8AD1F8C7180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar-button-icon-cancel.png"; path = "Resources/fancy-camera-bar-button-icon-cancel.png"; sourceTree = "<group>"; };
+		8AD1F8C8180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar-button-icon-cancel@2x.png"; path = "Resources/fancy-camera-bar-button-icon-cancel@2x.png"; sourceTree = "<group>"; };
+		8AD1F8C9180E69FB00E1029C /* fancy-camera-bar-button-icon-retake.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar-button-icon-retake.png"; path = "Resources/fancy-camera-bar-button-icon-retake.png"; sourceTree = "<group>"; };
+		8AD1F8CA180E69FB00E1029C /* fancy-camera-bar-button-icon-retake@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar-button-icon-retake@2x.png"; path = "Resources/fancy-camera-bar-button-icon-retake@2x.png"; sourceTree = "<group>"; };
+		8AD1F8CB180E69FB00E1029C /* fancy-camera-bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar.png"; path = "Resources/fancy-camera-bar.png"; sourceTree = "<group>"; };
+		8AD1F8CC180E69FB00E1029C /* fancy-camera-bar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-bar@2x.png"; path = "Resources/fancy-camera-bar@2x.png"; sourceTree = "<group>"; };
+		8AD1F8CD180E69FB00E1029C /* fancy-camera-filter-background-off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-filter-background-off.png"; path = "Resources/fancy-camera-filter-background-off.png"; sourceTree = "<group>"; };
+		8AD1F8CE180E69FB00E1029C /* fancy-camera-filter-background-off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-filter-background-off@2x.png"; path = "Resources/fancy-camera-filter-background-off@2x.png"; sourceTree = "<group>"; };
+		8AD1F8CF180E69FB00E1029C /* fancy-camera-filter-background-on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-filter-background-on.png"; path = "Resources/fancy-camera-filter-background-on.png"; sourceTree = "<group>"; };
+		8AD1F8D0180E69FB00E1029C /* fancy-camera-filter-background-on@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-filter-background-on@2x.png"; path = "Resources/fancy-camera-filter-background-on@2x.png"; sourceTree = "<group>"; };
+		8AD1F8D1180E69FB00E1029C /* fancy-camera-mesh-bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-mesh-bar.png"; path = "Resources/fancy-camera-mesh-bar.png"; sourceTree = "<group>"; };
+		8AD1F8D2180E69FB00E1029C /* fancy-camera-mesh-bar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-mesh-bar@2x.png"; path = "Resources/fancy-camera-mesh-bar@2x.png"; sourceTree = "<group>"; };
+		8AD1F8D3180E69FB00E1029C /* fancy-camera-snap-button-icon-camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-snap-button-icon-camera.png"; path = "Resources/fancy-camera-snap-button-icon-camera.png"; sourceTree = "<group>"; };
+		8AD1F8D4180E69FB00E1029C /* fancy-camera-snap-button-icon-camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-snap-button-icon-camera@2x.png"; path = "Resources/fancy-camera-snap-button-icon-camera@2x.png"; sourceTree = "<group>"; };
+		8AD1F8D5180E69FB00E1029C /* fancy-camera-snap-button-icon-tick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-snap-button-icon-tick.png"; path = "Resources/fancy-camera-snap-button-icon-tick.png"; sourceTree = "<group>"; };
+		8AD1F8D6180E69FB00E1029C /* fancy-camera-snap-button-icon-tick@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-snap-button-icon-tick@2x.png"; path = "Resources/fancy-camera-snap-button-icon-tick@2x.png"; sourceTree = "<group>"; };
+		8AD1F8D7180E69FB00E1029C /* fancy-camera-snap-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-snap-button.png"; path = "Resources/fancy-camera-snap-button.png"; sourceTree = "<group>"; };
+		8AD1F8D8180E69FB00E1029C /* fancy-camera-snap-button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "fancy-camera-snap-button@2x.png"; path = "Resources/fancy-camera-snap-button@2x.png"; sourceTree = "<group>"; };
+		8AD1F8EF180E6A0B00E1029C /* lookup_amatorka.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_amatorka.png; path = Resources/lookup_amatorka.png; sourceTree = "<group>"; };
+		8AD1F8F0180E6A0B00E1029C /* lookup_miss_etikate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_miss_etikate.png; path = Resources/lookup_miss_etikate.png; sourceTree = "<group>"; };
+		8AD1F8F1180E6A0B00E1029C /* lookup_soft_elegance_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_soft_elegance_1.png; path = Resources/lookup_soft_elegance_1.png; sourceTree = "<group>"; };
+		8AD1F8F2180E6A0B00E1029C /* lookup_soft_elegance_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_soft_elegance_2.png; path = Resources/lookup_soft_elegance_2.png; sourceTree = "<group>"; };
 		8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		8AF64F6417DCAAB800E6134F /* fancy-camera-bar-button-icon-camera-roll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar-button-icon-camera-roll.png"; sourceTree = "<group>"; };
-		8AF64F6517DCAAB800E6134F /* fancy-camera-bar-button-icon-camera-roll@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar-button-icon-camera-roll@2x.png"; sourceTree = "<group>"; };
-		8AF64F6617DCAAB800E6134F /* fancy-camera-bar-button-icon-cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar-button-icon-cancel.png"; sourceTree = "<group>"; };
-		8AF64F6717DCAAB900E6134F /* fancy-camera-bar-button-icon-cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar-button-icon-cancel@2x.png"; sourceTree = "<group>"; };
-		8AF64F6817DCAAB900E6134F /* fancy-camera-bar-button-icon-retake.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar-button-icon-retake.png"; sourceTree = "<group>"; };
-		8AF64F6917DCAAB900E6134F /* fancy-camera-bar-button-icon-retake@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar-button-icon-retake@2x.png"; sourceTree = "<group>"; };
-		8AF64F6A17DCAAB900E6134F /* fancy-camera-bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar.png"; sourceTree = "<group>"; };
-		8AF64F6B17DCAAB900E6134F /* fancy-camera-bar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-bar@2x.png"; sourceTree = "<group>"; };
-		8AF64F6C17DCAAB900E6134F /* fancy-camera-filter-background-off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-filter-background-off.png"; sourceTree = "<group>"; };
-		8AF64F6D17DCAAB900E6134F /* fancy-camera-filter-background-off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-filter-background-off@2x.png"; sourceTree = "<group>"; };
-		8AF64F6E17DCAAB900E6134F /* fancy-camera-filter-background-on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-filter-background-on.png"; sourceTree = "<group>"; };
-		8AF64F6F17DCAAB900E6134F /* fancy-camera-filter-background-on@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-filter-background-on@2x.png"; sourceTree = "<group>"; };
-		8AF64F7017DCAAB900E6134F /* fancy-camera-mesh-bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-mesh-bar.png"; sourceTree = "<group>"; };
-		8AF64F7117DCAAB900E6134F /* fancy-camera-mesh-bar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-mesh-bar@2x.png"; sourceTree = "<group>"; };
-		8AF64F7217DCAAB900E6134F /* fancy-camera-snap-button-icon-camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-snap-button-icon-camera.png"; sourceTree = "<group>"; };
-		8AF64F7317DCAAB900E6134F /* fancy-camera-snap-button-icon-camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-snap-button-icon-camera@2x.png"; sourceTree = "<group>"; };
-		8AF64F7417DCAAB900E6134F /* fancy-camera-snap-button-icon-tick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-snap-button-icon-tick.png"; sourceTree = "<group>"; };
-		8AF64F7517DCAAB900E6134F /* fancy-camera-snap-button-icon-tick@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-snap-button-icon-tick@2x.png"; sourceTree = "<group>"; };
-		8AF64F7617DCAAB900E6134F /* fancy-camera-snap-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-snap-button.png"; sourceTree = "<group>"; };
-		8AF64F7717DCAAB900E6134F /* fancy-camera-snap-button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fancy-camera-snap-button@2x.png"; sourceTree = "<group>"; };
 		8AF64F7C17DCAAEB00E6134F /* GBFancyCameraResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GBFancyCameraResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AF64F7D17DCAAEB00E6134F /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		8AF64F8117DCAAEB00E6134F /* GBFancyCameraResources-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GBFancyCameraResources-Info.plist"; sourceTree = "<group>"; };
@@ -159,10 +163,6 @@
 		8AF64F8517DCAAEB00E6134F /* GBFancyCameraResources-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GBFancyCameraResources-Prefix.pch"; sourceTree = "<group>"; };
 		8AF650F817DCB56E00E6134F /* GBSoftEleganceFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBSoftEleganceFilter.h; sourceTree = "<group>"; };
 		8AF650F917DCB56E00E6134F /* GBSoftEleganceFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBSoftEleganceFilter.m; sourceTree = "<group>"; };
-		8AF650FC17DCB64F00E6134F /* lookup_amatorka.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_amatorka.png; sourceTree = "<group>"; };
-		8AF650FD17DCB64F00E6134F /* lookup_miss_etikate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_miss_etikate.png; sourceTree = "<group>"; };
-		8AF650FE17DCB64F00E6134F /* lookup_soft_elegance_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_soft_elegance_1.png; sourceTree = "<group>"; };
-		8AF650FF17DCB64F00E6134F /* lookup_soft_elegance_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lookup_soft_elegance_2.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,10 +297,10 @@
 		8AF64F6217DCAAA800E6134F /* Filters */ = {
 			isa = PBXGroup;
 			children = (
-				8AF650FC17DCB64F00E6134F /* lookup_amatorka.png */,
-				8AF650FD17DCB64F00E6134F /* lookup_miss_etikate.png */,
-				8AF650FE17DCB64F00E6134F /* lookup_soft_elegance_1.png */,
-				8AF650FF17DCB64F00E6134F /* lookup_soft_elegance_2.png */,
+				8AD1F8EF180E6A0B00E1029C /* lookup_amatorka.png */,
+				8AD1F8F0180E6A0B00E1029C /* lookup_miss_etikate.png */,
+				8AD1F8F1180E6A0B00E1029C /* lookup_soft_elegance_1.png */,
+				8AD1F8F2180E6A0B00E1029C /* lookup_soft_elegance_2.png */,
 			);
 			name = Filters;
 			sourceTree = "<group>";
@@ -308,26 +308,26 @@
 		8AF64F6317DCAAAD00E6134F /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				8AF64F6417DCAAB800E6134F /* fancy-camera-bar-button-icon-camera-roll.png */,
-				8AF64F6517DCAAB800E6134F /* fancy-camera-bar-button-icon-camera-roll@2x.png */,
-				8AF64F6617DCAAB800E6134F /* fancy-camera-bar-button-icon-cancel.png */,
-				8AF64F6717DCAAB900E6134F /* fancy-camera-bar-button-icon-cancel@2x.png */,
-				8AF64F6817DCAAB900E6134F /* fancy-camera-bar-button-icon-retake.png */,
-				8AF64F6917DCAAB900E6134F /* fancy-camera-bar-button-icon-retake@2x.png */,
-				8AF64F6A17DCAAB900E6134F /* fancy-camera-bar.png */,
-				8AF64F6B17DCAAB900E6134F /* fancy-camera-bar@2x.png */,
-				8AF64F6C17DCAAB900E6134F /* fancy-camera-filter-background-off.png */,
-				8AF64F6D17DCAAB900E6134F /* fancy-camera-filter-background-off@2x.png */,
-				8AF64F6E17DCAAB900E6134F /* fancy-camera-filter-background-on.png */,
-				8AF64F6F17DCAAB900E6134F /* fancy-camera-filter-background-on@2x.png */,
-				8AF64F7017DCAAB900E6134F /* fancy-camera-mesh-bar.png */,
-				8AF64F7117DCAAB900E6134F /* fancy-camera-mesh-bar@2x.png */,
-				8AF64F7217DCAAB900E6134F /* fancy-camera-snap-button-icon-camera.png */,
-				8AF64F7317DCAAB900E6134F /* fancy-camera-snap-button-icon-camera@2x.png */,
-				8AF64F7417DCAAB900E6134F /* fancy-camera-snap-button-icon-tick.png */,
-				8AF64F7517DCAAB900E6134F /* fancy-camera-snap-button-icon-tick@2x.png */,
-				8AF64F7617DCAAB900E6134F /* fancy-camera-snap-button.png */,
-				8AF64F7717DCAAB900E6134F /* fancy-camera-snap-button@2x.png */,
+				8AD1F8C5180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll.png */,
+				8AD1F8C6180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll@2x.png */,
+				8AD1F8C7180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel.png */,
+				8AD1F8C8180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel@2x.png */,
+				8AD1F8C9180E69FB00E1029C /* fancy-camera-bar-button-icon-retake.png */,
+				8AD1F8CA180E69FB00E1029C /* fancy-camera-bar-button-icon-retake@2x.png */,
+				8AD1F8CB180E69FB00E1029C /* fancy-camera-bar.png */,
+				8AD1F8CC180E69FB00E1029C /* fancy-camera-bar@2x.png */,
+				8AD1F8CD180E69FB00E1029C /* fancy-camera-filter-background-off.png */,
+				8AD1F8CE180E69FB00E1029C /* fancy-camera-filter-background-off@2x.png */,
+				8AD1F8CF180E69FB00E1029C /* fancy-camera-filter-background-on.png */,
+				8AD1F8D0180E69FB00E1029C /* fancy-camera-filter-background-on@2x.png */,
+				8AD1F8D1180E69FB00E1029C /* fancy-camera-mesh-bar.png */,
+				8AD1F8D2180E69FB00E1029C /* fancy-camera-mesh-bar@2x.png */,
+				8AD1F8D3180E69FB00E1029C /* fancy-camera-snap-button-icon-camera.png */,
+				8AD1F8D4180E69FB00E1029C /* fancy-camera-snap-button-icon-camera@2x.png */,
+				8AD1F8D5180E69FB00E1029C /* fancy-camera-snap-button-icon-tick.png */,
+				8AD1F8D6180E69FB00E1029C /* fancy-camera-snap-button-icon-tick@2x.png */,
+				8AD1F8D7180E69FB00E1029C /* fancy-camera-snap-button.png */,
+				8AD1F8D8180E69FB00E1029C /* fancy-camera-snap-button@2x.png */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -494,31 +494,31 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AF64F8917DCAB2E00E6134F /* fancy-camera-bar-button-icon-camera-roll.png in Resources */,
-				8AF64F8A17DCAB2E00E6134F /* fancy-camera-bar-button-icon-camera-roll@2x.png in Resources */,
-				8AF64F8B17DCAB2E00E6134F /* fancy-camera-bar-button-icon-cancel.png in Resources */,
-				8AF64F8C17DCAB2E00E6134F /* fancy-camera-bar-button-icon-cancel@2x.png in Resources */,
-				8AF64F8D17DCAB2E00E6134F /* fancy-camera-bar-button-icon-retake.png in Resources */,
-				8AF64F8E17DCAB2E00E6134F /* fancy-camera-bar-button-icon-retake@2x.png in Resources */,
-				8AF64F8F17DCAB2E00E6134F /* fancy-camera-bar.png in Resources */,
-				8AF64F9017DCAB2E00E6134F /* fancy-camera-bar@2x.png in Resources */,
-				8AF64F9117DCAB2E00E6134F /* fancy-camera-filter-background-off.png in Resources */,
-				8AF64F9217DCAB2E00E6134F /* fancy-camera-filter-background-off@2x.png in Resources */,
-				8AF64F9317DCAB2E00E6134F /* fancy-camera-filter-background-on.png in Resources */,
-				8AF64F9417DCAB2E00E6134F /* fancy-camera-filter-background-on@2x.png in Resources */,
-				8AF64F9517DCAB2E00E6134F /* fancy-camera-mesh-bar.png in Resources */,
-				8AF64F9617DCAB2E00E6134F /* fancy-camera-mesh-bar@2x.png in Resources */,
-				8AF64F9717DCAB2E00E6134F /* fancy-camera-snap-button-icon-camera.png in Resources */,
-				8AF64F9817DCAB2E00E6134F /* fancy-camera-snap-button-icon-camera@2x.png in Resources */,
-				8AF64F9917DCAB2E00E6134F /* fancy-camera-snap-button-icon-tick.png in Resources */,
-				8AF64F9A17DCAB2E00E6134F /* fancy-camera-snap-button-icon-tick@2x.png in Resources */,
-				8AF64F9B17DCAB2E00E6134F /* fancy-camera-snap-button.png in Resources */,
-				8AF64F9C17DCAB2E00E6134F /* fancy-camera-snap-button@2x.png in Resources */,
-				8AF6510017DCB64F00E6134F /* lookup_amatorka.png in Resources */,
-				8AF6510117DCB64F00E6134F /* lookup_miss_etikate.png in Resources */,
-				8AF6510217DCB64F00E6134F /* lookup_soft_elegance_1.png in Resources */,
-				8AF6510317DCB64F00E6134F /* lookup_soft_elegance_2.png in Resources */,
+				8AD1F8E6180E69FB00E1029C /* fancy-camera-mesh-bar@2x.png in Resources */,
+				8AD1F8DF180E69FB00E1029C /* fancy-camera-bar.png in Resources */,
+				8AD1F8E7180E69FB00E1029C /* fancy-camera-snap-button-icon-camera.png in Resources */,
+				8AD1F8EC180E69FB00E1029C /* fancy-camera-snap-button@2x.png in Resources */,
+				8AD1F8DE180E69FB00E1029C /* fancy-camera-bar-button-icon-retake@2x.png in Resources */,
+				8AD1F8E8180E69FB00E1029C /* fancy-camera-snap-button-icon-camera@2x.png in Resources */,
+				8AD1F8F4180E6A0B00E1029C /* lookup_miss_etikate.png in Resources */,
+				8AD1F8F6180E6A0B00E1029C /* lookup_soft_elegance_2.png in Resources */,
+				8AD1F8EB180E69FB00E1029C /* fancy-camera-snap-button.png in Resources */,
+				8AD1F8D9180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll.png in Resources */,
+				8AD1F8E2180E69FB00E1029C /* fancy-camera-filter-background-off@2x.png in Resources */,
+				8AD1F8E0180E69FB00E1029C /* fancy-camera-bar@2x.png in Resources */,
+				8AD1F8DC180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel@2x.png in Resources */,
+				8AD1F8E3180E69FB00E1029C /* fancy-camera-filter-background-on.png in Resources */,
+				8AD1F8DD180E69FB00E1029C /* fancy-camera-bar-button-icon-retake.png in Resources */,
+				8AD1F8E9180E69FB00E1029C /* fancy-camera-snap-button-icon-tick.png in Resources */,
+				8AD1F8E4180E69FB00E1029C /* fancy-camera-filter-background-on@2x.png in Resources */,
+				8AD1F8E1180E69FB00E1029C /* fancy-camera-filter-background-off.png in Resources */,
+				8AD1F8DB180E69FB00E1029C /* fancy-camera-bar-button-icon-cancel.png in Resources */,
+				8AD1F8E5180E69FB00E1029C /* fancy-camera-mesh-bar.png in Resources */,
+				8AD1F8EA180E69FB00E1029C /* fancy-camera-snap-button-icon-tick@2x.png in Resources */,
+				8AD1F8DA180E69FB00E1029C /* fancy-camera-bar-button-icon-camera-roll@2x.png in Resources */,
+				8AD1F8F5180E6A0B00E1029C /* lookup_soft_elegance_1.png in Resources */,
 				8A4BDFAD17FB121A00089030 /* GBFancyCameraLocalizations.strings in Resources */,
+				8AD1F8F3180E6A0B00E1029C /* lookup_amatorka.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
