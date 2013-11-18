@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/lmirosevic/GBFancyCamera.git", :tag => "1.1.3" }
   s.source_files  = 'GBFancyCamera'
   s.public_header_files = 'GBFancyCamera/GBFancyCamera.h', 'GBFancyCamera/GBFancyCameraFilters.h', 'GBFancyCamera/GBFancyCameraFilterProtocol.h', 'GBFancyCamera/GBNoFilter.h', 'GBFancyCamera/GBResizeFilter.h', 'GBFancyCamera/GBMissEtikateFilter.h', 'GBFancyCamera/GBAmatorkaFilter.h', 'GBFancyCamera/GBSepiaFilter.h', 'GBFancyCamera/GBSoftEleganceFilter.h'
-  s.resource_bundle = { 'GBFancyCameraResources' => ['GBFancyCamera/Resources/*', 'GBFancyCamera/*.lproj'] }
+  s.resource_bundle = { 'GBFancyCameraResources2' => ['GBFancyCamera/Resources/*', 'GBFancyCamera/*.lproj'] }
   s.requires_arc = true
 
   s.dependency 'GBMotion'

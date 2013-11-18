@@ -327,7 +327,7 @@ typedef enum {
 
 static NSBundle *_resourcesBundle;
 +(void)initialize {
-    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"GBFancyCameraResources" ofType:@"bundle"];
+    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"GBFancyCameraResources2" ofType:@"bundle"];
     _resourcesBundle = [NSBundle bundleWithPath:resourceBundlePath];
 }
 

@@ -21,7 +21,7 @@ typedef void(^GBFancyCameraCompletionBlock)(UIImage *originalImage, UIImage *pro
 #define GBUnlimitedImageResolution CGFLOAT_MAX
 
 static inline NSString *BundledResource(NSString *resourceName) {
-    return [@"GBFancyCameraResources.bundle" stringByAppendingPathComponent:resourceName];
+    return [@"GBFancyCameraResources2.bundle" stringByAppendingPathComponent:resourceName];
 }
 
 @protocol GBFanceCameraDelegate;
