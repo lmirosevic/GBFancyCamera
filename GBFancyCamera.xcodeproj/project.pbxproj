@@ -410,9 +410,9 @@
 			productReference = 8A20017F17CFAD1B0046E265 /* libGBFancyCamera.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		8AF64F7B17DCAAEB00E6134F /* GBFancyCameraResources */ = {
+		8AF64F7B17DCAAEB00E6134F /* GBFancyCameraResources2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8AF64F8617DCAAEB00E6134F /* Build configuration list for PBXNativeTarget "GBFancyCameraResources" */;
+			buildConfigurationList = 8AF64F8617DCAAEB00E6134F /* Build configuration list for PBXNativeTarget "GBFancyCameraResources2" */;
 			buildPhases = (
 				8AF64F7817DCAAEB00E6134F /* Sources */,
 				8AF64F7917DCAAEB00E6134F /* Frameworks */,
@@ -422,7 +422,7 @@
 			);
 			dependencies = (
 			);
-			name = GBFancyCameraResources;
+			name = GBFancyCameraResources2;
 			productName = GBFancyCameraResources;
 			productReference = 8AF64F7C17DCAAEB00E6134F /* GBFancyCameraResources.bundle */;
 			productType = "com.apple.product-type.bundle";
@@ -460,7 +460,7 @@
 			projectRoot = "";
 			targets = (
 				8A20017E17CFAD1B0046E265 /* GBFancyCamera */,
-				8AF64F7B17DCAAEB00E6134F /* GBFancyCameraResources */,
+				8AF64F7B17DCAAEB00E6134F /* GBFancyCameraResources2 */,
 			);
 		};
 /* End PBXProject section */
@@ -726,7 +726,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8AF64F8617DCAAEB00E6134F /* Build configuration list for PBXNativeTarget "GBFancyCameraResources" */ = {
+		8AF64F8617DCAAEB00E6134F /* Build configuration list for PBXNativeTarget "GBFancyCameraResources2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8AF64F8717DCAAEB00E6134F /* Debug */,
