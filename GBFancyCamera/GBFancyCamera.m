@@ -83,6 +83,7 @@ static NSTimeInterval const kStateTransitionAnimationDuration =     0.3;
 static BOOL const kDefaultShouldAutoDismiss =                       YES;
 static CGFloat const kDefaultMaxOutputImageResolution =             GBUnlimitedImageResolution;
 static BOOL const kDefaultIsCameraRollEnabled =                     YES;
+static CGRect const kDefaultCropRegion =                            (CGRect){0,0,1.,1.};
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -151,6 +152,7 @@ typedef enum {
 @property (strong, nonatomic) UIImage                                                           *processedImage;
 @property (assign, nonatomic) GBFancyCameraSource                                               imageSource;
 
+@property (strong, nonatomic) GPUImageCropFilter                                                *cropFilter;
 @property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
 @property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
 @property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
@@ -329,21 +331,16 @@ typedef enum {
         //remove the old one
         [_viewfinderOverlay removeFromSuperview];
         
-        //add the new one
-        [self.view insertSubview:viewfinderOverlay aboveSubview:self.livePreviewView];
-    
         //configure the new one
         viewfinderOverlay.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        viewfinderOverlay.frame = CGRectMake(self.livePreviewView.frame.origin.x,
-                                             self.view.bounds.origin.y + kCameraViewportPadding.top,
-                                             self.livePreviewView.frame.size.width,
-                                             self.livePreviewView.frame.size.height);
         viewfinderOverlay.userInteractionEnabled = NO;
-        
+
         //set the ivar
         _viewfinderOverlay = viewfinderOverlay;
         
-        [self _handleViewfinderOverlay];
+        if (self.isViewLoaded) {
+            [self _handleViewfinderOverlay];
+        }
     }
 }
 
@@ -373,7 +370,7 @@ typedef enum {
 
 -(GBResizeFilter *)resizerMain {
     if (!_resizerMain) {
-        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:self.maxOutputImageResolution aspectRatio:kCameraAspectRatio];
+        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:[self _maxOutputImageResolutionBeforeCropping] aspectRatio:kCameraAspectRatio];
     }
     
     return _resizerMain;
@@ -381,6 +378,12 @@ typedef enum {
 
 -(void)setState:(GBFancyCameraState)state {
     [self _transitionUIToState:state animated:NO];
+}
+
+-(void)setCropRegion:(CGRect)cropRegion {
+    _cropRegion = cropRegion;
+    
+    self.cropFilter.cropRegion = cropRegion;
 }
 
 #pragma mark - Memory
@@ -411,6 +414,7 @@ static NSBundle *_resourcesBundle;
         //defaults
         self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
         self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
+        self.cropRegion = kDefaultCropRegion;
     }
     
     return self;
@@ -430,6 +434,8 @@ static NSBundle *_resourcesBundle;
     
     //set up camera stuff
     self.stillCamera = [[GPUImageStillCamera alloc] init];
+    self.cropFilter = [GPUImageCropFilter new];
+    self.cropFilter.cropRegion = self.cropRegion;
     self.passthroughFilter = [GPUImageFilter new];
     CGRect viewPortFrame = CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
                                       self.view.bounds.origin.y + kCameraViewportPadding.top,
@@ -651,6 +657,10 @@ static NSBundle *_resourcesBundle;
 
 #pragma mark - API
 
++(CGFloat)cameraAspectRatio {
+    return kCameraAspectRatio;
+}
+
 -(void)takePhotoWithBlock:(GBFancyCameraCompletionBlock)block {
     //if we're not presented, present ourselves onto the main window
     if (!self.isPresented) {
@@ -662,6 +672,18 @@ static NSBundle *_resourcesBundle;
 }
 
 #pragma mark - util
+
+-(CGFloat)_maxOutputImageResolutionBeforeCropping {
+    //if it's set to max resolution, just return that
+    if (self.maxOutputImageResolution == GBUnlimitedImageResolution) {
+        return self.maxOutputImageResolution;
+    }
+    //otherwise, calculate the desired resolution of the raw image feed so that after cropping we end up with the desired output image resolution
+    else {
+        CGFloat scalingFactor = self.cropRegion.size.width * self.cropRegion.size.height;
+        return self.maxOutputImageResolution / scalingFactor;
+    }
+}
 
 -(BOOL)_areFiltersEnabled {
     return (self.filters.count >= 1);
@@ -697,6 +719,17 @@ static NSBundle *_resourcesBundle;
 }
 
 -(void)_handleViewfinderOverlay {
+    //add it to the view hierarch if it hasn't already been added
+    if (self.isViewLoaded && self.viewfinderOverlay.superview != self.view) {
+        [self.view insertSubview:self.viewfinderOverlay aboveSubview:self.livePreviewView];
+        
+        self.viewfinderOverlay.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                  self.view.bounds.origin.y + kCameraViewportPadding.top,
+                                                  self.livePreviewView.frame.size.width,
+                                                  self.livePreviewView.frame.size.height);
+    }
+    
+    //manage the showing and hiding
     if ((self.state == GBFancyCameraStateCapturing) && [self _devicHasCamera]) {
         self.viewfinderOverlay.alpha = 1;
     }
@@ -839,12 +872,15 @@ static NSBundle *_resourcesBundle;
     GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterClass new];
     self.currentFilter = filterObject;
     [self.liveEgressMain removeAllTargets];
+    [self.cropFilter removeAllTargets];
     
     self.imagePic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
-    [self.imagePic addTarget:filterObject];
+    [self.imagePic addTarget:self.cropFilter];
+    [self.cropFilter addTarget:filterObject];
     [filterObject addTarget:self.livePreviewView];
     [filterObject prepareForImageCapture];
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
+    
     [self.imagePic processImage];
 }
 
@@ -1033,13 +1069,13 @@ static NSBundle *_resourcesBundle;
     CGFloat originalResolution = originalImage.size.width * originalImage.size.height;
     
     //if the max resolution is bigger than the image, just return the original image
-    if (self.maxOutputImageResolution >= originalResolution) {
+    if ([self _maxOutputImageResolutionBeforeCropping] >= originalResolution) {
         return originalImage;
     }
     //otherwise resize it
     else {
         //first resize it to a better size
-        CGFloat scalingFactor = pow(self.maxOutputImageResolution / originalResolution, 0.5);
+        CGFloat scalingFactor = pow([self _maxOutputImageResolutionBeforeCropping] / originalResolution, 0.5);
         CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
         
         //scale and rotate image

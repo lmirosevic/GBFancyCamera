@@ -43,11 +43,17 @@ static inline NSString *BundledResource(NSString *resourceName) {
 //add an overlay that covers the viewfinder (when taking a photo). The view is resized to fit the viewfinder exactly.
 @property (strong, nonatomic) UIView                        *viewfinderOverlay;
 
+//region in which to crop the image final, normalized to coordinates from 0.0 - 1.0. The (0.0, 0.0) position is in the upper left of the image.
+@property (assign, nonatomic) CGRect                        cropRegion;                 //default: (CGRect){0,0,1,1}
+
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;
 
 //resources bundle
 +(NSBundle *)resourcesBundle;
+
+//returns the aspect ratio of the camera
++(CGFloat)cameraAspectRatio;
 
 //you can create fresh instances if you need to
 -(id)init;
