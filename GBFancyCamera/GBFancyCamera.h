@@ -40,6 +40,9 @@ static inline NSString *BundledResource(NSString *resourceName) {
 //use this to disable the camera roll
 @property (assign, nonatomic) BOOL                          isCameraRollEnabled;//default: YES
 
+//add an overlay that covers the viewfinder (when taking a photo). The view is resized to fit the viewfinder exactly.
+@property (strong, nonatomic) UIView                        *viewfinderOverlay;
+
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;
 

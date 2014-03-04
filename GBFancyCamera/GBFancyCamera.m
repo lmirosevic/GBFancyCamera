@@ -324,6 +324,29 @@ typedef enum {
     return _orientationHandler;
 }
 
+-(void)setViewfinderOverlay:(UIView *)viewfinderOverlay {
+    if (_viewfinderOverlay != viewfinderOverlay) {
+        //remove the old one
+        [_viewfinderOverlay removeFromSuperview];
+        
+        //add the new one
+        [self.view insertSubview:viewfinderOverlay aboveSubview:self.livePreviewView];
+    
+        //configure the new one
+        viewfinderOverlay.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        viewfinderOverlay.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                             self.view.bounds.origin.y + kCameraViewportPadding.top,
+                                             self.livePreviewView.frame.size.width,
+                                             self.livePreviewView.frame.size.height);
+        viewfinderOverlay.userInteractionEnabled = NO;
+        
+        //set the ivar
+        _viewfinderOverlay = viewfinderOverlay;
+        
+        [self _handleViewfinderOverlay];
+    }
+}
+
 -(void)setIsCameraRollEnabled:(BOOL)isCameraRollEnabled {
     _isCameraRollEnabled = isCameraRollEnabled;
     
@@ -644,6 +667,10 @@ static NSBundle *_resourcesBundle;
     return (self.filters.count >= 1);
 }
 
+-(BOOL)_devicHasCamera {
+    return [self.stillCamera isBackFacingCameraPresent];
+}
+
 -(CGFloat)_rotationAngleForCurrentDeviceOrientation {
     switch (self.deviceOrientation) {
         case GBMotionDeviceOrientationPortraitUpsideDown: {
@@ -669,15 +696,22 @@ static NSBundle *_resourcesBundle;
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)_handleViewfinderOverlay {
+    if ((self.state == GBFancyCameraStateCapturing) && [self _devicHasCamera]) {
+        self.viewfinderOverlay.alpha = 1;
+    }
+    else {
+        self.viewfinderOverlay.alpha = 0;
+    }
+}
+
 -(void)_handleNoCameraLabel {
     NSString *noCameraText = NSLocalizedStringFromTableInBundle(@"No camera available.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string");
     if (self.isCameraRollEnabled) noCameraText = [noCameraText stringByAppendingString:[NSString stringWithFormat:@"\n%@", NSLocalizedStringFromTableInBundle(@"You can still use the camera roll.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string")]];
     self.noCameraLabel.text = noCameraText;
-    BOOL hasCamera = [self.stillCamera isBackFacingCameraPresent];
-    BOOL livePreviewState = (self.state == GBFancyCameraStateCapturing);
     
     //handle no camera
-    BOOL showNoCameraLabel = (livePreviewState && !hasCamera);
+    BOOL showNoCameraLabel = ((self.state == GBFancyCameraStateCapturing) && ![self _devicHasCamera]);
     self.noCameraLabel.hidden = !showNoCameraLabel;
 }
 
@@ -694,7 +728,7 @@ static NSBundle *_resourcesBundle;
 
 -(void)_capturePhoto {
     //if it has a cam do the right thing
-    if ([self.stillCamera isBackFacingCameraPresent]) {
+    if ([self _devicHasCamera]) {
         self.mainButton.enabled = NO;
         
         //camera capture
@@ -936,6 +970,9 @@ static NSBundle *_resourcesBundle;
         
         //handle no camera label
         [self _handleNoCameraLabel];
+        
+        //handle viewfinder overlay
+        [self _handleViewfinderOverlay];
     }
 }
 
@@ -984,7 +1021,7 @@ static NSBundle *_resourcesBundle;
     [self.livePreviewView setNeedsDisplay];
     
     //reset output if camera isn't available (if one is available, then the new camera feed will purge whats in there currently, if there is no camera feed however, then we need to manually clear it by pushing through a black image)
-    if (![self.stillCamera isBackFacingCameraPresent]) {
+    if (![self _devicHasCamera]) {
         GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:[UIImage imageWithSolidColor:[UIColor blackColor]]];
         [pic addTarget:self.livePreviewView];
         [pic processImage];
