@@ -35,7 +35,7 @@ static inline NSString *BundledResource(NSString *resourceName) {
 @property (strong, nonatomic) NSArray                       *filters;
 
 //resize the output image
-@property (assign, nonatomic) CGFloat                       outputImageResolution;//default: GBUnlimitedResolution
+@property (assign, nonatomic) CGFloat                       maxOutputImageResolution;//default: GBUnlimitedResolution
 
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;

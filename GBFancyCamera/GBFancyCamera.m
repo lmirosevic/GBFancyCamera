@@ -81,7 +81,7 @@ static CGFloat const kNoCameraLabelHorizontalMargin =               20;
 static NSTimeInterval const kStateTransitionAnimationDuration =     0.3;
 
 static BOOL const kDefaultShouldAutoDismiss =                       YES;
-static CGFloat const kDefaultOutputImageResolution =                GBUnlimitedImageResolution;
+static CGFloat const kDefaultMaxOutputImageResolution =             GBUnlimitedImageResolution;
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -349,7 +349,7 @@ static NSBundle *_resourcesBundle;
 -(id)init {
     if (self = [super init]) {
         //defaults
-        self.outputImageResolution = kDefaultOutputImageResolution;
+        self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
     }
     
     return self;
@@ -377,7 +377,7 @@ static NSBundle *_resourcesBundle;
 
 -(GBResizeFilter *)resizerMain {
     if (!_resizerMain) {
-        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:self.outputImageResolution aspectRatio:kCameraAspectRatio];
+        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:self.maxOutputImageResolution aspectRatio:kCameraAspectRatio];
     }
     
     return _resizerMain;
@@ -943,15 +943,23 @@ static NSBundle *_resourcesBundle;
 }
 
 -(UIImage *)_processCameraRollImage:(UIImage *)originalImage {
-    //first resize it to a better size
     CGFloat originalResolution = originalImage.size.width * originalImage.size.height;
-    CGFloat scalingFactor = pow(self.outputImageResolution / originalResolution, 0.5);
-    CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
     
-    //scale and rotate image
-    UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
-    
-    return scaledAndRotatedImage;
+    //if the max resolution is bigger than the image, just return the original image
+    if (self.maxOutputImageResolution >= originalResolution) {
+        return originalImage;
+    }
+    //otherwise resize it
+    else {
+        //first resize it to a better size
+        CGFloat scalingFactor = pow(self.maxOutputImageResolution / originalResolution, 0.5);
+        CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
+        
+        //scale and rotate image
+        UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
+        
+        return scaledAndRotatedImage;
+    }
 }
 
 #pragma mark - System media picker util
