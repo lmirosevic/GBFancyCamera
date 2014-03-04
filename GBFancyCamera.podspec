@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "GBFancyCamera"
-  s.version      = "1.1.6"
+  s.version      = "2.0.0"
   s.summary      = "A blocks based class for getting images from the camera and camera roll, with preview, customisable UI and pluggable filters."
   s.homepage     = "https://github.com/lmirosevic/GBFancyCamera"
   s.license      = 'Apache License, Version 2.0'
