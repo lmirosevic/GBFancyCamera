@@ -167,9 +167,7 @@ typedef enum {
 
 @end
 
-@interface GBFancyCamera () <UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
-    NSArray                                                                                     *_filters;
-}
+@interface GBFancyCamera () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @end
 
@@ -383,15 +381,6 @@ static NSBundle *_resourcesBundle;
     }
     
     _filters = myFilters;
-}
-
--(NSArray *)filters {
-    if (_filters) {
-        return _filters;
-    }
-    else {
-        return @[GBNoFilter.class];
-    }
 }
 
 -(GBResizeFilter *)resizerMain {
@@ -653,6 +642,10 @@ static NSBundle *_resourcesBundle;
 
 #pragma mark - util
 
+-(BOOL)_areFiltersEnabled {
+    return (self.filters.count >= 1);
+}
+
 -(CGFloat)_rotationAngleForCurrentDeviceOrientation {
     switch (self.deviceOrientation) {
         case GBMotionDeviceOrientationPortraitUpsideDown: {
@@ -763,8 +756,17 @@ static NSBundle *_resourcesBundle;
     self.filtersScrollView.alwaysBounceHorizontal = YES;
     self.filterViews = [NSMutableArray new];
     
+    //if no filters are set, just set the default to GBNoFilter
+    NSArray *filters;
+    if ([self _areFiltersEnabled]) {
+        filters = self.filters;
+    }
+    else {
+        filters = @[GBNoFilter.class];
+    }
+    
     NSUInteger index = 0;
-    for (Class filterClass in self.filters) {
+    for (Class filterClass in filters) {
         GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterClass new];
         
         //filter the image using each of these filters in turn
@@ -867,10 +869,7 @@ static NSBundle *_resourcesBundle;
                 //animations
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //viewport
-                    self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
-                                                            self.view.bounds.origin.y + kCameraViewportPadding.top,
-                                                            self.livePreviewView.frame.size.width,
-                                                            self.livePreviewView.frame.size.height);
+                    [self _setLivePreviewFrameWhenShowingBottomBar:NO];
                     
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-camera")] forState:UIControlStateNormal];
@@ -886,10 +885,8 @@ static NSBundle *_resourcesBundle;
                     self.cameraRollButton.alpha = 1;
                     
                     //filters
-                    self.filtersContainerView.frame = CGRectMake(0,
-                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginClosed,
-                                                                 self.filtersContainerView.frame.size.width,
-                                                                 self.filtersContainerView.frame.size.height);
+                    [self _setFiltersFrameToShowFilters:NO];
+                    
                     //heading
                     self.barHeadingLabel.alpha = 0;
                 } completion:nil];
@@ -902,10 +899,7 @@ static NSBundle *_resourcesBundle;
                 //animations
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //viewport
-                    self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
-                                                            (self.view.bounds.size.height - (kFilterTrayHeight + kFilterTrayBottomMarginOpen) - self.livePreviewView.frame.size.height) / 2,
-                                                            self.livePreviewView.frame.size.width,
-                                                            self.livePreviewView.frame.size.height);
+                    [self _setLivePreviewFrameWhenShowingBottomBar:[self _areFiltersEnabled]];
                     
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-tick")] forState:UIControlStateNormal];
@@ -921,13 +915,19 @@ static NSBundle *_resourcesBundle;
                     self.cameraRollButton.alpha = 0;
                     
                     //filters
-                    self.filtersContainerView.frame = CGRectMake(0,
-                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginOpen,
-                                                                 self.filtersContainerView.frame.size.width,
-                                                                 self.filtersContainerView.frame.size.height);
+                    [self _setFiltersFrameToShowFilters:[self _areFiltersEnabled]];
                     
                     //heading
-                    self.barHeadingLabel.text = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
+                    NSString *barHeadingText;
+                    
+                    if ([self _areFiltersEnabled]) {
+                        barHeadingText = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
+                    }
+                    else {
+                        barHeadingText = NSLocalizedStringFromTableInBundle(@"Preview", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"preview state heading");
+                    }
+                    
+                    self.barHeadingLabel.text = barHeadingText;
                     self.barHeadingLabel.alpha = 1;
                 } completion:nil];
             } break;
@@ -938,6 +938,36 @@ static NSBundle *_resourcesBundle;
         
         //handle no camera label
         [self _handleNoCameraLabel];
+    }
+}
+
+-(void)_setFiltersFrameToShowFilters:(BOOL)shouldShowFilters {
+    if (shouldShowFilters) {
+        self.filtersContainerView.frame = CGRectMake(0,
+                                                     self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginOpen,
+                                                     self.filtersContainerView.frame.size.width,
+                                                     self.filtersContainerView.frame.size.height);
+    }
+    else {
+        self.filtersContainerView.frame = CGRectMake(0,
+                                                     self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginClosed,
+                                                     self.filtersContainerView.frame.size.width,
+                                                     self.filtersContainerView.frame.size.height);
+    }
+}
+
+-(void)_setLivePreviewFrameWhenShowingBottomBar:(BOOL)isShowingBottomBar {
+    if (isShowingBottomBar) {
+        self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                (self.view.bounds.size.height - (kFilterTrayHeight + kFilterTrayBottomMarginOpen) - self.livePreviewView.frame.size.height) / 2,
+                                                self.livePreviewView.frame.size.width,
+                                                self.livePreviewView.frame.size.height);
+    }
+    else {
+        self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                self.view.bounds.origin.y + kCameraViewportPadding.top,
+                                                self.livePreviewView.frame.size.width,
+                                                self.livePreviewView.frame.size.height);
     }
 }
 

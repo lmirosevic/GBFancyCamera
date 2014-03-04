@@ -4,6 +4,9 @@
 /* filters state heading */
 "Filters" = "Filters";
 
+/* preview state heading */
+"Preview" = "Preview";
+
 /* no camera string */
 "No camera available." = "No camera available.";
 

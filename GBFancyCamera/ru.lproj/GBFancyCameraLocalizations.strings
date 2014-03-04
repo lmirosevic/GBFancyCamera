@@ -4,6 +4,9 @@
 /* filters state heading */
 "Filters" = "Фильтры";
 
+/* preview state heading */
+"Preview" = "Обзор";
+
 /* no camera string */
 "No camera available." = "Камера недоступна.";
 
