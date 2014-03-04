@@ -37,6 +37,9 @@ static inline NSString *BundledResource(NSString *resourceName) {
 //resize the output image
 @property (assign, nonatomic) CGFloat                       maxOutputImageResolution;//default: GBUnlimitedResolution
 
+//use this to disable the camera roll
+@property (assign, nonatomic) BOOL                          isCameraRollEnabled;//default: YES
+
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;
 

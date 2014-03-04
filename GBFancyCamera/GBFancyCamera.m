@@ -82,6 +82,7 @@ static NSTimeInterval const kStateTransitionAnimationDuration =     0.3;
 
 static BOOL const kDefaultShouldAutoDismiss =                       YES;
 static CGFloat const kDefaultMaxOutputImageResolution =             GBUnlimitedImageResolution;
+static BOOL const kDefaultIsCameraRollEnabled =                     YES;
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -166,7 +167,9 @@ typedef enum {
 
 @end
 
-@interface GBFancyCamera () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface GBFancyCamera () <UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
+    NSArray                                                                                     *_filters;
+}
 
 @end
 
@@ -350,12 +353,19 @@ static NSBundle *_resourcesBundle;
     if (self = [super init]) {
         //defaults
         self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
+        self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
     }
     
     return self;
 }
 
 #pragma mark - CA
+
+-(void)setIsCameraRollEnabled:(BOOL)isCameraRollEnabled {
+    _isCameraRollEnabled = isCameraRollEnabled;
+    
+    self.cameraRollButton.hidden = !isCameraRollEnabled;
+}
 
 -(void)setFilters:(NSArray *)filters {
     NSMutableArray *myFilters = [NSMutableArray new];
@@ -373,6 +383,15 @@ static NSBundle *_resourcesBundle;
     }
     
     _filters = myFilters;
+}
+
+-(NSArray *)filters {
+    if (_filters) {
+        return _filters;
+    }
+    else {
+        return @[GBNoFilter.class];
+    }
 }
 
 -(GBResizeFilter *)resizerMain {
@@ -468,6 +487,7 @@ static NSBundle *_resourcesBundle;
     [self.cameraRollButton setImage:cameraRollImage forState:UIControlStateNormal];
     self.cameraRollButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
     [self.barContainerView addSubview:self.cameraRollButton];
+    self.isCameraRollEnabled = self.isCameraRollEnabled;//this triggers the side effects
 
     //main button
     self.mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -659,7 +679,9 @@ static NSBundle *_resourcesBundle;
 }
 
 -(void)_handleNoCameraLabel {
-    self.noCameraLabel.text = NSLocalizedStringFromTableInBundle(@"No camera available.\nYou can still use the camera roll.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string");
+    NSString *noCameraText = NSLocalizedStringFromTableInBundle(@"No camera available.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string");
+    if (self.isCameraRollEnabled) noCameraText = [noCameraText stringByAppendingString:[NSString stringWithFormat:@"\n%@", NSLocalizedStringFromTableInBundle(@"You can still use the camera roll.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string")]];
+    self.noCameraLabel.text = noCameraText;
     BOOL hasCamera = [self.stillCamera isBackFacingCameraPresent];
     BOOL livePreviewState = (self.state == GBFancyCameraStateCapturing);
     

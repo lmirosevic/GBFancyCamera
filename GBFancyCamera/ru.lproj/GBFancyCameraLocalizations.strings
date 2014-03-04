@@ -5,7 +5,10 @@
 "Filters" = "Фильтры";
 
 /* no camera string */
-"No camera available.\nYou can still use the camera roll." = "Камера недоступна.\Ты можеш использовать фотопленку ";
+"No camera available." = "Камера недоступна.";
+
+/* no camera string */
+"You can still use the camera roll." = "Ты можеш использовать фотопленку";
 
 /* filter name */
 "No filter" = "Без фильтра";

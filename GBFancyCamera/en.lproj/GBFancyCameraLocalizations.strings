@@ -5,7 +5,10 @@
 "Filters" = "Filters";
 
 /* no camera string */
-"No camera available.\nYou can still use the camera roll." = "No camera available.\nYou can still use the camera roll.";
+"No camera available." = "No camera available.";
+
+/* no camera string */
+"You can still use the camera roll." = "You can still use the camera roll.";
 
 /* filter name */
 "No filter" = "No filter";
