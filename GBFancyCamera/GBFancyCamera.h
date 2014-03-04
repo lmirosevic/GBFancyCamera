@@ -35,10 +35,10 @@ static inline NSString *BundledResource(NSString *resourceName) {
 @property (strong, nonatomic) NSArray                       *filters;
 
 //resize the output image
-@property (assign, nonatomic) CGFloat                       maxOutputImageResolution;//default: GBUnlimitedResolution
+@property (assign, nonatomic) CGFloat                       maxOutputImageResolution;   //default: GBUnlimitedResolution
 
 //use this to disable the camera roll
-@property (assign, nonatomic) BOOL                          isCameraRollEnabled;//default: YES
+@property (assign, nonatomic) BOOL                          isCameraRollEnabled;        //default: YES
 
 //add an overlay that covers the viewfinder (when taking a photo). The view is resized to fit the viewfinder exactly.
 @property (strong, nonatomic) UIView                        *viewfinderOverlay;
