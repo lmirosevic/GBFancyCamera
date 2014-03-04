@@ -1,0 +1,32 @@
+/* camera roll not available */
+"Camera roll not available." = "Gesicherte Fotos nicht verfügbar.";
+
+/* filters state heading */
+"Filters" = "Filter";
+
+/* preview state heading */
+"Preview" = "Vorschau";
+
+/* no camera string */
+"No camera available." = "Keine Kamera vorhanden.";
+
+/* no camera string */
+"You can still use the camera roll." = "Gesicherte Fotos sind verfügbar.";
+
+/* filter name */
+"No filter" = "Kein Filter";
+
+/* filter name */
+"Elegance" = "Elegance";
+
+/* filter name */
+"Sepia" = "Sepia";
+
+/* filter name */
+"Amatorka" = "Amatorka";
+
+/* filter name */
+"Etikate" = "Etikate";
+
+/* filter name */
+"Resize" = "Resize";

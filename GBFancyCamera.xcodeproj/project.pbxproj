@@ -155,6 +155,8 @@
 		8AD1F8F0180E6A0B00E1029C /* lookup_miss_etikate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_miss_etikate.png; path = Resources/lookup_miss_etikate.png; sourceTree = "<group>"; };
 		8AD1F8F1180E6A0B00E1029C /* lookup_soft_elegance_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_soft_elegance_1.png; path = Resources/lookup_soft_elegance_1.png; sourceTree = "<group>"; };
 		8AD1F8F2180E6A0B00E1029C /* lookup_soft_elegance_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lookup_soft_elegance_2.png; path = Resources/lookup_soft_elegance_2.png; sourceTree = "<group>"; };
+		8AF5ECE918C644D2003ED2CF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/GBFancyCameraLocalizations.strings; sourceTree = "<group>"; };
+		8AF5ECEA18C644D2003ED2CF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8AF64F4617DC7CF400E6134F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		8AF64F7C17DCAAEB00E6134F /* GBFancyCameraResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = GBFancyCameraResources.bundle; path = GBFancyCameraResources2.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AF64F7D17DCAAEB00E6134F /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -443,6 +445,7 @@
 			knownRegions = (
 				en,
 				ru,
+				de,
 			);
 			mainGroup = 8A20017617CFAD1B0046E265;
 			productRefGroup = 8A20018017CFAD1B0046E265 /* Products */;
@@ -568,6 +571,7 @@
 			children = (
 				8A4BDFAE17FB121A00089030 /* en */,
 				8A4BDFB317FB123600089030 /* ru */,
+				8AF5ECE918C644D2003ED2CF /* de */,
 			);
 			name = GBFancyCameraLocalizations.strings;
 			sourceTree = "<group>";
@@ -576,6 +580,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8AF64F8317DCAAEB00E6134F /* en */,
+				8AF5ECEA18C644D2003ED2CF /* de */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
