@@ -11,6 +11,8 @@
 #import "GBFancyCameraFilters.h"
 #import "GBFancyCameraFilterProtocol.h"
 
+#import <GBMotion/GBMotion.h>
+
 typedef enum {
     GBFancyCameraSourceNone,
     GBFancyCameraSourceCamera,
@@ -45,6 +47,9 @@ static inline NSString *BundledResource(NSString *resourceName) {
 
 //region in which to crop the image final, normalized to coordinates from 0.0 - 1.0. The (0.0, 0.0) position is in the upper left of the image.
 @property (assign, nonatomic) CGRect                        cropRegion;                 //default: (CGRect){0,0,1,1}
+
+//lets you force a specific orientation of the camera, and disable automatic rotation handling. Set to GBMotionDeviceOrientationUnknown to enable auto rotations (default)
+@property (assign, nonatomic) GBMotionDeviceOrientation     forcedOrientation;          //default: GBMotionDeviceOrientationUnknown
 
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;

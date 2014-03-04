@@ -11,9 +11,6 @@
 //image library import
 #import "GPUImage.h"
 
-//motion imports
-#import "GBMotion.h"
-
 //system library imports
 #import <QuartzCore/QuartzCore.h>
 
@@ -84,6 +81,7 @@ static BOOL const kDefaultShouldAutoDismiss =                       YES;
 static CGFloat const kDefaultMaxOutputImageResolution =             GBUnlimitedImageResolution;
 static BOOL const kDefaultIsCameraRollEnabled =                     YES;
 static CGRect const kDefaultCropRegion =                            (CGRect){0,0,1.,1.};
+static GBMotionDeviceOrientation const kDefaultForcedOrientation =  GBMotionDeviceOrientationUnknown;
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -313,11 +311,13 @@ typedef enum {
         __weak GBFancyCamera *weakSelf = self;
         _orientationHandler = ^(GBMotionGesture gesture, NSDictionary *info) {
             if (gesture == GBMotionGestureChangedDeviceOrientation) {
-                weakSelf.deviceOrientation = (GBMotionDeviceOrientation)[info[kGBMotionDeviceOrientationKey] intValue];
-                if (weakSelf.state == GBFancyCameraStateCapturing) {
-                    [UIView animateWithDuration:0.1 animations:^{
-                        weakSelf.mainButton.transform = CGAffineTransformMakeRotation([weakSelf _rotationAngleForCurrentDeviceOrientation]);
-                    }];
+                if (weakSelf.forcedOrientation == GBMotionDeviceOrientationUnknown) {
+                    weakSelf.deviceOrientation = (GBMotionDeviceOrientation)[info[kGBMotionDeviceOrientationKey] intValue];
+                    if (weakSelf.state == GBFancyCameraStateCapturing) {
+                        [UIView animateWithDuration:0.1 animations:^{
+                            weakSelf.mainButton.transform = CGAffineTransformMakeRotation([weakSelf _rotationAngleForCurrentDeviceOrientation]);
+                        }];
+                    }
                 }
             }
         };
@@ -415,6 +415,7 @@ static NSBundle *_resourcesBundle;
         self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
         self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
         self.cropRegion = kDefaultCropRegion;
+        self.forcedOrientation = kDefaultForcedOrientation;
     }
     
     return self;
@@ -594,8 +595,16 @@ static NSBundle *_resourcesBundle;
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
-    self.deviceOrientation = [GBMotion sharedMotion].deviceOrientation;
+    
+    //orientation based on GBMotion
+    if (self.forcedOrientation == GBMotionDeviceOrientationUnknown) {
+        self.deviceOrientation = [GBMotion sharedMotion].deviceOrientation;
+    }
+    //orientation forcing
+    else {
+        self.deviceOrientation = self.forcedOrientation;
+    }
+    
     [[GBMotion sharedMotion] addHandler:self.orientationHandler];
     
     if (!self.presentedViewController) {
