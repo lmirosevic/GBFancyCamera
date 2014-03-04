@@ -20,7 +20,7 @@
 //media picker imports
 #import <MobileCoreServices/MobileCoreServices.h>
 
-static CGFloat const kCameraAspectRatio =                           16./9.;
+static CGFloat const kCameraAspectRatio =                           4./3.;
 
 static CGFloat const kBottomBarHeight =                             53;
 static CGFloat const kBottomBarBottomMargin =                       0;
@@ -438,7 +438,7 @@ static NSBundle *_resourcesBundle;
     self.wantsFullScreenLayout = YES;
     
     //set up camera stuff
-    self.stillCamera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPresetHigh cameraPosition:AVCaptureDevicePositionBack];
+    self.stillCamera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPresetPhoto cameraPosition:AVCaptureDevicePositionBack];
     [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
     self.cropFilter = [GPUImageCropFilter new];
     self.cropFilter.cropRegion = self.cropRegion;
@@ -682,7 +682,7 @@ static NSBundle *_resourcesBundle;
 -(void)takePhotoWithBlock:(GBFancyCameraCompletionBlock)block {
     //if we're not presented, present ourselves onto the main window
     if (!self.isPresented) {
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:self animated:YES completion:nil];
+        [TopmostViewController() presentViewController:self animated:YES completion:nil];
     }
     
     //remember the completion block
@@ -690,6 +690,28 @@ static NSBundle *_resourcesBundle;
 }
 
 #pragma mark - utils
+
+UIViewController * TopmostViewController() {
+    return TopmostViewControllerWithRootViewController([UIApplication sharedApplication].keyWindow.rootViewController);
+}
+
+UIViewController * TopmostViewControllerWithRootViewController(UIViewController *rootViewController) {
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController *tabBarController = (UITabBarController *)rootViewController;
+        return TopmostViewControllerWithRootViewController(tabBarController.selectedViewController);
+    }
+    else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController;
+        return TopmostViewControllerWithRootViewController(navigationController.visibleViewController);
+    }
+    else if (rootViewController.presentedViewController) {
+        UIViewController *presentedViewController = rootViewController.presentedViewController;
+        return TopmostViewControllerWithRootViewController(presentedViewController);
+    }
+    else {
+        return rootViewController;
+    }
+}
 
 -(void)_setFocusAndExposureAtPoint:(CGPoint)point {
     AVCaptureDevice *inputCamera = self.stillCamera.inputCamera;
