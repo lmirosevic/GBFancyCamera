@@ -20,7 +20,7 @@
 //media picker imports
 #import <MobileCoreServices/MobileCoreServices.h>
 
-static CGFloat const kCameraAspectRatio =                           4./3.;
+static CGFloat const kCameraAspectRatio =                           16./9.;
 
 static CGFloat const kBottomBarHeight =                             53;
 static CGFloat const kBottomBarBottomMargin =                       0;
@@ -82,6 +82,7 @@ static CGFloat const kDefaultMaxOutputImageResolution =             GBUnlimitedI
 static BOOL const kDefaultIsCameraRollEnabled =                     YES;
 static CGRect const kDefaultCropRegion =                            (CGRect){0,0,1.,1.};
 static GBMotionDeviceOrientation const kDefaultForcedOrientation =  GBMotionDeviceOrientationUnknown;
+static BOOL const kDefaultIsTapToFocusEnabled =                     YES;
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -160,6 +161,8 @@ typedef enum {
 
 @property (strong, nonatomic) GBMotionGestureHandler                                            orientationHandler;
 @property (assign, nonatomic) GBMotionDeviceOrientation                                         deviceOrientation;
+
+@property (strong, nonatomic) UITapGestureRecognizer                                            *tapGestureRecognizer;
 
 @end
 
@@ -416,6 +419,7 @@ static NSBundle *_resourcesBundle;
         self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
         self.cropRegion = kDefaultCropRegion;
         self.forcedOrientation = kDefaultForcedOrientation;
+//        self.isTapToFocusEnabled = kDefaultIsTapToFocusEnabled;
     }
     
     return self;
@@ -434,7 +438,8 @@ static NSBundle *_resourcesBundle;
     self.wantsFullScreenLayout = YES;
     
     //set up camera stuff
-    self.stillCamera = [[GPUImageStillCamera alloc] init];
+    self.stillCamera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPresetHigh cameraPosition:AVCaptureDevicePositionBack];
+    [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
     self.cropFilter = [GPUImageCropFilter new];
     self.cropFilter.cropRegion = self.cropRegion;
     self.passthroughFilter = [GPUImageFilter new];
@@ -459,6 +464,10 @@ static NSBundle *_resourcesBundle;
     [self.view addSubview:self.livePreviewView];
     
     /* Controls */
+    
+    //tap gesture recognizer
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_didTapToFocus:)];
+    [self.livePreviewView addGestureRecognizer:self.tapGestureRecognizer];
     
     //bar container
     self.barContainerView = [[UIView alloc] initWithFrame:CGRectMake(0,
@@ -680,7 +689,40 @@ static NSBundle *_resourcesBundle;
     self.completionBlock = block;
 }
 
-#pragma mark - util
+#pragma mark - utils
+
+-(void)_setFocusAndExposureAtPoint:(CGPoint)point {
+    AVCaptureDevice *inputCamera = self.stillCamera.inputCamera;
+    
+    if ([inputCamera lockForConfiguration:nil]) {
+        //focus
+        if ([inputCamera isFocusPointOfInterestSupported]) {
+            [inputCamera setFocusPointOfInterest:point];
+            
+            if ([inputCamera isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
+                [inputCamera setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+            }
+            else if ([inputCamera isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+                [inputCamera setFocusMode:AVCaptureFocusModeAutoFocus];
+            }
+        }
+        
+        //exposure
+        if ([inputCamera isExposurePointOfInterestSupported]) {
+            [inputCamera setExposurePointOfInterest:point];
+            
+            if ([inputCamera isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]) {
+                [inputCamera setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+            }
+            else if ([inputCamera isExposureModeSupported:AVCaptureExposureModeAutoExpose]) {
+                [inputCamera setExposureMode:AVCaptureExposureModeAutoExpose];
+            }
+        }
+        
+        //unlock configuration
+        [inputCamera unlockForConfiguration];
+    }
+}
 
 -(CGFloat)_maxOutputImageResolutionBeforeCropping {
     //if it's set to max resolution, just return that
@@ -1119,6 +1161,26 @@ static NSBundle *_resourcesBundle;
     
     [self.stillCamera pauseCameraCapture];
     [self presentViewController:mediaUI animated:YES completion:nil];
+}
+
+#pragma mark - UITapGestureRecognizer
+
+-(void)_didTapToFocus:(UITapGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateEnded) {
+//        if (self.isTapToFocusEnabled) {
+            //find position in view
+            //TODO
+            
+            //display visual indicator at point in view
+            //TODO
+            
+            //find normalised position in camera coordinate
+            //TODO
+            
+            //set focus on the camera
+//            [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
+//        }
+    }
 }
 
 #pragma mark - UIImagePickerControllerDelegate

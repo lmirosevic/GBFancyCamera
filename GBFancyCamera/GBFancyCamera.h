@@ -51,6 +51,9 @@ static inline NSString *BundledResource(NSString *resourceName) {
 //lets you force a specific orientation of the camera, and disable automatic rotation handling. Set to GBMotionDeviceOrientationUnknown to enable auto rotations (default)
 @property (assign, nonatomic) GBMotionDeviceOrientation     forcedOrientation;          //default: GBMotionDeviceOrientationUnknown
 
+//let's you enable/disabled tap to focus for the camera
+//@property (assign, nonatomic) BOOL                          isTapToFocusEnabled;        //default: YES
+
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;
 
