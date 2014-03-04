@@ -21,7 +21,7 @@
 -(void)setOutputResolution:(CGFloat)outputResolution {
     if (outputResolution < 0) @throw [NSException exceptionWithName:NSArgumentDomain reason:@"outputResolution must be positive" userInfo:nil];
     
-    if (outputResolution == GBResizeFilterUnlimitedResolution) {
+    if (outputResolution == GBUnlimitedImageResolution) {
         self.outputSize = CGSizeZero;
     }
     else {

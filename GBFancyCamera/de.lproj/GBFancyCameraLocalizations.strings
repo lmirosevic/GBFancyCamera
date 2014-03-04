@@ -1,20 +1,20 @@
 /* camera roll not available */
-"Camera roll not available." = "Camera roll not available.";
+"Camera roll not available." = "Gesicherte Fotos nicht verfügbar.";
 
 /* filters state heading */
-"Filters" = "Filters";
+"Filters" = "Filter";
 
 /* preview state heading */
-"Preview" = "Preview";
+"Preview" = "Vorschau";
 
 /* no camera string */
-"No camera available." = "No camera available.";
+"No camera available." = "Keine Kamera vorhanden.";
 
 /* no camera string */
-"You can still use the camera roll." = "You can still use the camera roll.";
+"You can still use the camera roll." = "Gesicherte Fotos sind verfügbar.";
 
 /* filter name */
-"No filter" = "No filter";
+"No filter" = "Kein Filter";
 
 /* filter name */
 "Elegance" = "Elegance";

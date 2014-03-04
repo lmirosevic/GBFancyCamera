@@ -11,6 +11,8 @@
 #import "GBFancyCameraFilters.h"
 #import "GBFancyCameraFilterProtocol.h"
 
+#import <GBMotion/GBMotion.h>
+
 typedef enum {
     GBFancyCameraSourceNone,
     GBFancyCameraSourceCamera,
@@ -35,13 +37,31 @@ static inline NSString *BundledResource(NSString *resourceName) {
 @property (strong, nonatomic) NSArray                       *filters;
 
 //resize the output image
-@property (assign, nonatomic) CGFloat                       outputImageResolution;//default: GBUnlimitedResolution
+@property (assign, nonatomic) CGFloat                       maxOutputImageResolution;   //default: GBUnlimitedResolution
+
+//use this to disable the camera roll
+@property (assign, nonatomic) BOOL                          isCameraRollEnabled;        //default: YES
+
+//add an overlay that covers the viewfinder (when taking a photo). The view is resized to fit the viewfinder exactly.
+@property (strong, nonatomic) UIView                        *viewfinderOverlay;
+
+//region in which to crop the image final, normalized to coordinates from 0.0 - 1.0. The (0.0, 0.0) position is in the upper left of the image.
+@property (assign, nonatomic) CGRect                        cropRegion;                 //default: (CGRect){0,0,1,1}
+
+//lets you force a specific orientation of the camera, and disable automatic rotation handling. Set to GBMotionDeviceOrientationUnknown to enable auto rotations (default)
+@property (assign, nonatomic) GBMotionDeviceOrientation     forcedOrientation;          //default: GBMotionDeviceOrientationUnknown
+
+//let's you enable/disabled tap to focus for the camera
+//@property (assign, nonatomic) BOOL                          isTapToFocusEnabled;        //default: YES
 
 //get the singleton instance
 +(GBFancyCamera *)sharedCamera;
 
 //resources bundle
 +(NSBundle *)resourcesBundle;
+
+//returns the aspect ratio of the camera
++(CGFloat)cameraAspectRatio;
 
 //you can create fresh instances if you need to
 -(id)init;

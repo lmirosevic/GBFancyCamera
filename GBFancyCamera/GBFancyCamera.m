@@ -11,9 +11,6 @@
 //image library import
 #import "GPUImage.h"
 
-//motion imports
-#import "GBMotion.h"
-
 //system library imports
 #import <QuartzCore/QuartzCore.h>
 
@@ -81,7 +78,11 @@ static CGFloat const kNoCameraLabelHorizontalMargin =               20;
 static NSTimeInterval const kStateTransitionAnimationDuration =     0.3;
 
 static BOOL const kDefaultShouldAutoDismiss =                       YES;
-static CGFloat const kDefaultOutputImageResolution =                GBUnlimitedImageResolution;
+static CGFloat const kDefaultMaxOutputImageResolution =             GBUnlimitedImageResolution;
+static BOOL const kDefaultIsCameraRollEnabled =                     YES;
+static CGRect const kDefaultCropRegion =                            (CGRect){0,0,1.,1.};
+static GBMotionDeviceOrientation const kDefaultForcedOrientation =  GBMotionDeviceOrientationUnknown;
+static BOOL const kDefaultIsTapToFocusEnabled =                     YES;
 
 typedef enum {
     GBFancyCameraStateCapturing,
@@ -150,6 +151,7 @@ typedef enum {
 @property (strong, nonatomic) UIImage                                                           *processedImage;
 @property (assign, nonatomic) GBFancyCameraSource                                               imageSource;
 
+@property (strong, nonatomic) GPUImageCropFilter                                                *cropFilter;
 @property (strong, nonatomic) GBResizeFilter                                                    *resizerMain;
 @property (strong, nonatomic) GPUImageFilter                                                    *passthroughFilter;
 @property (strong, nonatomic) GPUImageView                                                      *livePreviewView;
@@ -159,6 +161,8 @@ typedef enum {
 
 @property (strong, nonatomic) GBMotionGestureHandler                                            orientationHandler;
 @property (assign, nonatomic) GBMotionDeviceOrientation                                         deviceOrientation;
+
+@property (strong, nonatomic) UITapGestureRecognizer                                            *tapGestureRecognizer;
 
 @end
 
@@ -310,17 +314,79 @@ typedef enum {
         __weak GBFancyCamera *weakSelf = self;
         _orientationHandler = ^(GBMotionGesture gesture, NSDictionary *info) {
             if (gesture == GBMotionGestureChangedDeviceOrientation) {
-                weakSelf.deviceOrientation = (GBMotionDeviceOrientation)[info[kGBMotionDeviceOrientationKey] intValue];
-                if (weakSelf.state == GBFancyCameraStateCapturing) {
-                    [UIView animateWithDuration:0.1 animations:^{
-                        weakSelf.mainButton.transform = CGAffineTransformMakeRotation([weakSelf _rotationAngleForCurrentDeviceOrientation]);
-                    }];
+                if (weakSelf.forcedOrientation == GBMotionDeviceOrientationUnknown) {
+                    weakSelf.deviceOrientation = (GBMotionDeviceOrientation)[info[kGBMotionDeviceOrientationKey] intValue];
+                    if (weakSelf.state == GBFancyCameraStateCapturing) {
+                        [UIView animateWithDuration:0.1 animations:^{
+                            weakSelf.mainButton.transform = CGAffineTransformMakeRotation([weakSelf _rotationAngleForCurrentDeviceOrientation]);
+                        }];
+                    }
                 }
             }
         };
     }
     
     return _orientationHandler;
+}
+
+-(void)setViewfinderOverlay:(UIView *)viewfinderOverlay {
+    if (_viewfinderOverlay != viewfinderOverlay) {
+        //remove the old one
+        [_viewfinderOverlay removeFromSuperview];
+        
+        //configure the new one
+        viewfinderOverlay.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        viewfinderOverlay.userInteractionEnabled = NO;
+
+        //set the ivar
+        _viewfinderOverlay = viewfinderOverlay;
+        
+        if (self.isViewLoaded) {
+            [self _handleViewfinderOverlay];
+        }
+    }
+}
+
+-(void)setIsCameraRollEnabled:(BOOL)isCameraRollEnabled {
+    _isCameraRollEnabled = isCameraRollEnabled;
+    
+    self.cameraRollButton.hidden = !isCameraRollEnabled;
+}
+
+-(void)setFilters:(NSArray *)filters {
+    NSMutableArray *myFilters = [NSMutableArray new];
+    
+    //add in all the rest
+    for (Class filterClass in filters) {
+        if ([filterClass conformsToProtocol:@protocol(GBFancyCameraFilterProtocol)] &&
+            [filterClass conformsToProtocol:@protocol(GPUImageInput)] &&
+            [filterClass isSubclassOfClass:GPUImageOutput.class]) {
+            [myFilters addObject:filterClass];
+        }
+        else {
+            @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Filter must conform to GBFancyCameraFilterProtocol and be a subclass of either GPUImageFilter or GPUImageFilterGroup" userInfo:nil];
+        }
+    }
+    
+    _filters = myFilters;
+}
+
+-(GBResizeFilter *)resizerMain {
+    if (!_resizerMain) {
+        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:[self _maxOutputImageResolutionBeforeCropping] aspectRatio:kCameraAspectRatio];
+    }
+    
+    return _resizerMain;
+}
+
+-(void)setState:(GBFancyCameraState)state {
+    [self _transitionUIToState:state animated:NO];
+}
+
+-(void)setCropRegion:(CGRect)cropRegion {
+    _cropRegion = cropRegion;
+    
+    self.cropFilter.cropRegion = cropRegion;
 }
 
 #pragma mark - Memory
@@ -349,42 +415,14 @@ static NSBundle *_resourcesBundle;
 -(id)init {
     if (self = [super init]) {
         //defaults
-        self.outputImageResolution = kDefaultOutputImageResolution;
+        self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
+        self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
+        self.cropRegion = kDefaultCropRegion;
+        self.forcedOrientation = kDefaultForcedOrientation;
+//        self.isTapToFocusEnabled = kDefaultIsTapToFocusEnabled;
     }
     
     return self;
-}
-
-#pragma mark - CA
-
--(void)setFilters:(NSArray *)filters {
-    NSMutableArray *myFilters = [NSMutableArray new];
-    
-    //add in all the rest
-    for (Class filterClass in filters) {
-        if ([filterClass conformsToProtocol:@protocol(GBFancyCameraFilterProtocol)] &&
-            [filterClass conformsToProtocol:@protocol(GPUImageInput)] &&
-            [filterClass isSubclassOfClass:GPUImageOutput.class]) {
-            [myFilters addObject:filterClass];
-        }
-        else {
-            @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Filter must conform to GBFancyCameraFilterProtocol and be a subclass of either GPUImageFilter or GPUImageFilterGroup" userInfo:nil];
-        }
-    }
-    
-    _filters = myFilters;
-}
-
--(GBResizeFilter *)resizerMain {
-    if (!_resizerMain) {
-        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:self.outputImageResolution aspectRatio:kCameraAspectRatio];
-    }
-    
-    return _resizerMain;
-}
-
--(void)setState:(GBFancyCameraState)state {
-    [self _transitionUIToState:state animated:NO];
 }
 
 #pragma mark - Life
@@ -400,7 +438,10 @@ static NSBundle *_resourcesBundle;
     self.wantsFullScreenLayout = YES;
     
     //set up camera stuff
-    self.stillCamera = [[GPUImageStillCamera alloc] init];
+    self.stillCamera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPresetPhoto cameraPosition:AVCaptureDevicePositionBack];
+    [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
+    self.cropFilter = [GPUImageCropFilter new];
+    self.cropFilter.cropRegion = self.cropRegion;
     self.passthroughFilter = [GPUImageFilter new];
     CGRect viewPortFrame = CGRectMake(self.view.bounds.origin.x + kCameraViewportPadding.left,
                                       self.view.bounds.origin.y + kCameraViewportPadding.top,
@@ -423,6 +464,10 @@ static NSBundle *_resourcesBundle;
     [self.view addSubview:self.livePreviewView];
     
     /* Controls */
+    
+    //tap gesture recognizer
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_didTapToFocus:)];
+    [self.livePreviewView addGestureRecognizer:self.tapGestureRecognizer];
     
     //bar container
     self.barContainerView = [[UIView alloc] initWithFrame:CGRectMake(0,
@@ -468,6 +513,7 @@ static NSBundle *_resourcesBundle;
     [self.cameraRollButton setImage:cameraRollImage forState:UIControlStateNormal];
     self.cameraRollButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
     [self.barContainerView addSubview:self.cameraRollButton];
+    self.isCameraRollEnabled = self.isCameraRollEnabled;//this triggers the side effects
 
     //main button
     self.mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -558,8 +604,16 @@ static NSBundle *_resourcesBundle;
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
-    self.deviceOrientation = [GBMotion sharedMotion].deviceOrientation;
+    
+    //orientation based on GBMotion
+    if (self.forcedOrientation == GBMotionDeviceOrientationUnknown) {
+        self.deviceOrientation = [GBMotion sharedMotion].deviceOrientation;
+    }
+    //orientation forcing
+    else {
+        self.deviceOrientation = self.forcedOrientation;
+    }
+    
     [[GBMotion sharedMotion] addHandler:self.orientationHandler];
     
     if (!self.presentedViewController) {
@@ -621,17 +675,96 @@ static NSBundle *_resourcesBundle;
 
 #pragma mark - API
 
++(CGFloat)cameraAspectRatio {
+    return kCameraAspectRatio;
+}
+
 -(void)takePhotoWithBlock:(GBFancyCameraCompletionBlock)block {
     //if we're not presented, present ourselves onto the main window
     if (!self.isPresented) {
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:self animated:YES completion:nil];
+        [TopmostViewController() presentViewController:self animated:YES completion:nil];
     }
     
     //remember the completion block
     self.completionBlock = block;
 }
 
-#pragma mark - util
+#pragma mark - utils
+
+UIViewController * TopmostViewController() {
+    return TopmostViewControllerWithRootViewController([UIApplication sharedApplication].keyWindow.rootViewController);
+}
+
+UIViewController * TopmostViewControllerWithRootViewController(UIViewController *rootViewController) {
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController *tabBarController = (UITabBarController *)rootViewController;
+        return TopmostViewControllerWithRootViewController(tabBarController.selectedViewController);
+    }
+    else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController;
+        return TopmostViewControllerWithRootViewController(navigationController.visibleViewController);
+    }
+    else if (rootViewController.presentedViewController) {
+        UIViewController *presentedViewController = rootViewController.presentedViewController;
+        return TopmostViewControllerWithRootViewController(presentedViewController);
+    }
+    else {
+        return rootViewController;
+    }
+}
+
+-(void)_setFocusAndExposureAtPoint:(CGPoint)point {
+    AVCaptureDevice *inputCamera = self.stillCamera.inputCamera;
+    
+    if ([inputCamera lockForConfiguration:nil]) {
+        //focus
+        if ([inputCamera isFocusPointOfInterestSupported]) {
+            [inputCamera setFocusPointOfInterest:point];
+            
+            if ([inputCamera isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
+                [inputCamera setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+            }
+            else if ([inputCamera isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+                [inputCamera setFocusMode:AVCaptureFocusModeAutoFocus];
+            }
+        }
+        
+        //exposure
+        if ([inputCamera isExposurePointOfInterestSupported]) {
+            [inputCamera setExposurePointOfInterest:point];
+            
+            if ([inputCamera isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]) {
+                [inputCamera setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+            }
+            else if ([inputCamera isExposureModeSupported:AVCaptureExposureModeAutoExpose]) {
+                [inputCamera setExposureMode:AVCaptureExposureModeAutoExpose];
+            }
+        }
+        
+        //unlock configuration
+        [inputCamera unlockForConfiguration];
+    }
+}
+
+-(CGFloat)_maxOutputImageResolutionBeforeCropping {
+    //if it's set to max resolution, just return that
+    if (self.maxOutputImageResolution == GBUnlimitedImageResolution) {
+        return self.maxOutputImageResolution;
+    }
+    //otherwise, calculate the desired resolution of the raw image feed so that after cropping we end up with the desired output image resolution
+    else {
+        CGFloat scalingFactor = self.cropRegion.size.width * self.cropRegion.size.height;
+        return self.maxOutputImageResolution / scalingFactor;
+    }
+}
+
+-(BOOL)_areFiltersEnabled {
+    return (self.filters.count >= 1);
+}
+
+-(BOOL)_devicHasCamera {
+    return [self.stillCamera isBackFacingCameraPresent];
+}
 
 -(CGFloat)_rotationAngleForCurrentDeviceOrientation {
     switch (self.deviceOrientation) {
@@ -658,13 +791,33 @@ static NSBundle *_resourcesBundle;
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)_handleViewfinderOverlay {
+    //add it to the view hierarch if it hasn't already been added
+    if (self.isViewLoaded && self.viewfinderOverlay.superview != self.view) {
+        [self.view insertSubview:self.viewfinderOverlay aboveSubview:self.livePreviewView];
+        
+        self.viewfinderOverlay.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                  self.view.bounds.origin.y + kCameraViewportPadding.top,
+                                                  self.livePreviewView.frame.size.width,
+                                                  self.livePreviewView.frame.size.height);
+    }
+    
+    //manage the showing and hiding
+    if ((self.state == GBFancyCameraStateCapturing) && [self _devicHasCamera]) {
+        self.viewfinderOverlay.alpha = 1;
+    }
+    else {
+        self.viewfinderOverlay.alpha = 0;
+    }
+}
+
 -(void)_handleNoCameraLabel {
-    self.noCameraLabel.text = NSLocalizedStringFromTableInBundle(@"No camera available.\nYou can still use the camera roll.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string");
-    BOOL hasCamera = [self.stillCamera isBackFacingCameraPresent];
-    BOOL livePreviewState = (self.state == GBFancyCameraStateCapturing);
+    NSString *noCameraText = NSLocalizedStringFromTableInBundle(@"No camera available.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string");
+    if (self.isCameraRollEnabled) noCameraText = [noCameraText stringByAppendingString:[NSString stringWithFormat:@"\n%@", NSLocalizedStringFromTableInBundle(@"You can still use the camera roll.", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"no camera string")]];
+    self.noCameraLabel.text = noCameraText;
     
     //handle no camera
-    BOOL showNoCameraLabel = (livePreviewState && !hasCamera);
+    BOOL showNoCameraLabel = ((self.state == GBFancyCameraStateCapturing) && ![self _devicHasCamera]);
     self.noCameraLabel.hidden = !showNoCameraLabel;
 }
 
@@ -681,7 +834,7 @@ static NSBundle *_resourcesBundle;
 
 -(void)_capturePhoto {
     //if it has a cam do the right thing
-    if ([self.stillCamera isBackFacingCameraPresent]) {
+    if ([self _devicHasCamera]) {
         self.mainButton.enabled = NO;
         
         //camera capture
@@ -741,8 +894,17 @@ static NSBundle *_resourcesBundle;
     self.filtersScrollView.alwaysBounceHorizontal = YES;
     self.filterViews = [NSMutableArray new];
     
+    //if no filters are set, just set the default to GBNoFilter
+    NSArray *filters;
+    if ([self _areFiltersEnabled]) {
+        filters = self.filters;
+    }
+    else {
+        filters = @[GBNoFilter.class];
+    }
+    
     NSUInteger index = 0;
-    for (Class filterClass in self.filters) {
+    for (Class filterClass in filters) {
         GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterClass new];
         
         //filter the image using each of these filters in turn
@@ -783,12 +945,15 @@ static NSBundle *_resourcesBundle;
     GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [filterClass new];
     self.currentFilter = filterObject;
     [self.liveEgressMain removeAllTargets];
+    [self.cropFilter removeAllTargets];
     
     self.imagePic = [[GPUImagePicture alloc] initWithImage:self.originalImage];
-    [self.imagePic addTarget:filterObject];
+    [self.imagePic addTarget:self.cropFilter];
+    [self.cropFilter addTarget:filterObject];
     [filterObject addTarget:self.livePreviewView];
     [filterObject prepareForImageCapture];
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
+    
     [self.imagePic processImage];
 }
 
@@ -845,10 +1010,7 @@ static NSBundle *_resourcesBundle;
                 //animations
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //viewport
-                    self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
-                                                            self.view.bounds.origin.y + kCameraViewportPadding.top,
-                                                            self.livePreviewView.frame.size.width,
-                                                            self.livePreviewView.frame.size.height);
+                    [self _setLivePreviewFrameWhenShowingBottomBar:NO];
                     
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-camera")] forState:UIControlStateNormal];
@@ -864,10 +1026,8 @@ static NSBundle *_resourcesBundle;
                     self.cameraRollButton.alpha = 1;
                     
                     //filters
-                    self.filtersContainerView.frame = CGRectMake(0,
-                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginClosed,
-                                                                 self.filtersContainerView.frame.size.width,
-                                                                 self.filtersContainerView.frame.size.height);
+                    [self _setFiltersFrameToShowFilters:NO];
+                    
                     //heading
                     self.barHeadingLabel.alpha = 0;
                 } completion:nil];
@@ -880,10 +1040,7 @@ static NSBundle *_resourcesBundle;
                 //animations
                 [UIView animateWithDuration:duration delay:0 options:0 animations:^{
                     //viewport
-                    self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
-                                                            (self.view.bounds.size.height - (kFilterTrayHeight + kFilterTrayBottomMarginOpen) - self.livePreviewView.frame.size.height) / 2,
-                                                            self.livePreviewView.frame.size.width,
-                                                            self.livePreviewView.frame.size.height);
+                    [self _setLivePreviewFrameWhenShowingBottomBar:[self _areFiltersEnabled]];
                     
                     //main button
                     [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-tick")] forState:UIControlStateNormal];
@@ -899,13 +1056,19 @@ static NSBundle *_resourcesBundle;
                     self.cameraRollButton.alpha = 0;
                     
                     //filters
-                    self.filtersContainerView.frame = CGRectMake(0,
-                                                                 self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginOpen,
-                                                                 self.filtersContainerView.frame.size.width,
-                                                                 self.filtersContainerView.frame.size.height);
+                    [self _setFiltersFrameToShowFilters:[self _areFiltersEnabled]];
                     
                     //heading
-                    self.barHeadingLabel.text = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
+                    NSString *barHeadingText;
+                    
+                    if ([self _areFiltersEnabled]) {
+                        barHeadingText = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
+                    }
+                    else {
+                        barHeadingText = NSLocalizedStringFromTableInBundle(@"Preview", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"preview state heading");
+                    }
+                    
+                    self.barHeadingLabel.text = barHeadingText;
                     self.barHeadingLabel.alpha = 1;
                 } completion:nil];
             } break;
@@ -916,6 +1079,39 @@ static NSBundle *_resourcesBundle;
         
         //handle no camera label
         [self _handleNoCameraLabel];
+        
+        //handle viewfinder overlay
+        [self _handleViewfinderOverlay];
+    }
+}
+
+-(void)_setFiltersFrameToShowFilters:(BOOL)shouldShowFilters {
+    if (shouldShowFilters) {
+        self.filtersContainerView.frame = CGRectMake(0,
+                                                     self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginOpen,
+                                                     self.filtersContainerView.frame.size.width,
+                                                     self.filtersContainerView.frame.size.height);
+    }
+    else {
+        self.filtersContainerView.frame = CGRectMake(0,
+                                                     self.view.bounds.size.height - kFilterTrayHeight - kFilterTrayBottomMarginClosed,
+                                                     self.filtersContainerView.frame.size.width,
+                                                     self.filtersContainerView.frame.size.height);
+    }
+}
+
+-(void)_setLivePreviewFrameWhenShowingBottomBar:(BOOL)isShowingBottomBar {
+    if (isShowingBottomBar) {
+        self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                (self.view.bounds.size.height - (kFilterTrayHeight + kFilterTrayBottomMarginOpen) - self.livePreviewView.frame.size.height) / 2,
+                                                self.livePreviewView.frame.size.width,
+                                                self.livePreviewView.frame.size.height);
+    }
+    else {
+        self.livePreviewView.frame = CGRectMake(self.livePreviewView.frame.origin.x,
+                                                self.view.bounds.origin.y + kCameraViewportPadding.top,
+                                                self.livePreviewView.frame.size.width,
+                                                self.livePreviewView.frame.size.height);
     }
 }
 
@@ -934,7 +1130,7 @@ static NSBundle *_resourcesBundle;
     [self.livePreviewView setNeedsDisplay];
     
     //reset output if camera isn't available (if one is available, then the new camera feed will purge whats in there currently, if there is no camera feed however, then we need to manually clear it by pushing through a black image)
-    if (![self.stillCamera isBackFacingCameraPresent]) {
+    if (![self _devicHasCamera]) {
         GPUImagePicture *pic = [[GPUImagePicture alloc] initWithImage:[UIImage imageWithSolidColor:[UIColor blackColor]]];
         [pic addTarget:self.livePreviewView];
         [pic processImage];
@@ -943,15 +1139,23 @@ static NSBundle *_resourcesBundle;
 }
 
 -(UIImage *)_processCameraRollImage:(UIImage *)originalImage {
-    //first resize it to a better size
     CGFloat originalResolution = originalImage.size.width * originalImage.size.height;
-    CGFloat scalingFactor = pow(self.outputImageResolution / originalResolution, 0.5);
-    CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
     
-    //scale and rotate image
-    UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
-    
-    return scaledAndRotatedImage;
+    //if the max resolution is bigger than the image, just return the original image
+    if ([self _maxOutputImageResolutionBeforeCropping] >= originalResolution) {
+        return originalImage;
+    }
+    //otherwise resize it
+    else {
+        //first resize it to a better size
+        CGFloat scalingFactor = pow([self _maxOutputImageResolutionBeforeCropping] / originalResolution, 0.5);
+        CGSize newSize = CGSizeMake(roundf(originalImage.size.width * scalingFactor), roundf(originalImage.size.height * scalingFactor));
+        
+        //scale and rotate image
+        UIImage *scaledAndRotatedImage = [originalImage resizedImage:newSize interpolationQuality:kCGInterpolationMedium];
+        
+        return scaledAndRotatedImage;
+    }
 }
 
 #pragma mark - System media picker util
@@ -979,6 +1183,26 @@ static NSBundle *_resourcesBundle;
     
     [self.stillCamera pauseCameraCapture];
     [self presentViewController:mediaUI animated:YES completion:nil];
+}
+
+#pragma mark - UITapGestureRecognizer
+
+-(void)_didTapToFocus:(UITapGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateEnded) {
+//        if (self.isTapToFocusEnabled) {
+            //find position in view
+            //TODO
+            
+            //display visual indicator at point in view
+            //TODO
+            
+            //find normalised position in camera coordinate
+            //TODO
+            
+            //set focus on the camera
+//            [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
+//        }
+    }
 }
 
 #pragma mark - UIImagePickerControllerDelegate
