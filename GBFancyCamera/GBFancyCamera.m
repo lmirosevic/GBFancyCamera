@@ -324,41 +324,6 @@ typedef enum {
     return _orientationHandler;
 }
 
-#pragma mark - Memory
-
-static NSBundle *_resourcesBundle;
-+(void)initialize {
-    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"GBFancyCameraResources2" ofType:@"bundle"];
-    _resourcesBundle = [NSBundle bundleWithPath:resourceBundlePath];
-}
-
-+(NSBundle *)resourcesBundle {
-    return _resourcesBundle;
-}
-
-+(GBFancyCamera *)sharedCamera {
-    static GBFancyCamera *_sharedCamera;
-    @synchronized(self) {
-        if (!_sharedCamera) {
-            _sharedCamera = [self new];
-        }
-    }
-    
-    return _sharedCamera;
-}
-
--(id)init {
-    if (self = [super init]) {
-        //defaults
-        self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
-        self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
-    }
-    
-    return self;
-}
-
-#pragma mark - CA
-
 -(void)setIsCameraRollEnabled:(BOOL)isCameraRollEnabled {
     _isCameraRollEnabled = isCameraRollEnabled;
     
@@ -393,6 +358,39 @@ static NSBundle *_resourcesBundle;
 
 -(void)setState:(GBFancyCameraState)state {
     [self _transitionUIToState:state animated:NO];
+}
+
+#pragma mark - Memory
+
+static NSBundle *_resourcesBundle;
++(void)initialize {
+    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"GBFancyCameraResources2" ofType:@"bundle"];
+    _resourcesBundle = [NSBundle bundleWithPath:resourceBundlePath];
+}
+
++(NSBundle *)resourcesBundle {
+    return _resourcesBundle;
+}
+
++(GBFancyCamera *)sharedCamera {
+    static GBFancyCamera *_sharedCamera;
+    @synchronized(self) {
+        if (!_sharedCamera) {
+            _sharedCamera = [self new];
+        }
+    }
+    
+    return _sharedCamera;
+}
+
+-(id)init {
+    if (self = [super init]) {
+        //defaults
+        self.maxOutputImageResolution = kDefaultMaxOutputImageResolution;
+        self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
+    }
+    
+    return self;
 }
 
 #pragma mark - Life
