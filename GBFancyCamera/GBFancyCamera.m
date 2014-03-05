@@ -691,11 +691,11 @@ static NSBundle *_resourcesBundle;
 
 #pragma mark - utils
 
-UIViewController * TopmostViewController() {
+static UIViewController * TopmostViewController() {
     return TopmostViewControllerWithRootViewController([UIApplication sharedApplication].keyWindow.rootViewController);
 }
 
-UIViewController * TopmostViewControllerWithRootViewController(UIViewController *rootViewController) {
+static UIViewController * TopmostViewControllerWithRootViewController(UIViewController *rootViewController) {
     if ([rootViewController isKindOfClass:[UITabBarController class]]) {
         UITabBarController *tabBarController = (UITabBarController *)rootViewController;
         return TopmostViewControllerWithRootViewController(tabBarController.selectedViewController);
