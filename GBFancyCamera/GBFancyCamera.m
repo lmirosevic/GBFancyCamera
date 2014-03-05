@@ -419,7 +419,7 @@ static NSBundle *_resourcesBundle;
         self.isCameraRollEnabled = kDefaultIsCameraRollEnabled;
         self.cropRegion = kDefaultCropRegion;
         self.forcedOrientation = kDefaultForcedOrientation;
-//        self.isTapToFocusEnabled = kDefaultIsTapToFocusEnabled;
+        self.isTapToFocusEnabled = kDefaultIsTapToFocusEnabled;
     }
     
     return self;
@@ -1189,7 +1189,7 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
 
 -(void)_didTapToFocus:(UITapGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateEnded) {
-//        if (self.isTapToFocusEnabled) {
+        if (self.isTapToFocusEnabled) {
             //find position in view
             //TODO
             
@@ -1200,8 +1200,8 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
             //TODO
             
             //set focus on the camera
-//            [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
-//        }
+            [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
+        }
     }
 }
 
