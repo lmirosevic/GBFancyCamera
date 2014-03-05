@@ -20,6 +20,9 @@
 //media picker imports
 #import <MobileCoreServices/MobileCoreServices.h>
 
+//view imports
+#import "TapToFocusView.h"
+
 static CGFloat const kCameraAspectRatio =                           16./9.;
 
 static CGFloat const kBottomBarHeight =                             53;
@@ -163,6 +166,8 @@ typedef enum {
 @property (assign, nonatomic) GBMotionDeviceOrientation                                         deviceOrientation;
 
 @property (strong, nonatomic) UITapGestureRecognizer                                            *tapGestureRecognizer;
+
+@property (strong, nonatomic) TapToFocusView                                                    *tapToFocusView;
 
 @end
 
@@ -437,7 +442,7 @@ static NSBundle *_resourcesBundle;
     self.view.backgroundColor = [UIColor blackColor];
     self.wantsFullScreenLayout = YES;
     
-    //set up camera stuffs
+    //set up camera stuff
     self.stillCamera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPresetHigh cameraPosition:AVCaptureDevicePositionBack];
     self.cropFilter = [GPUImageCropFilter new];
     self.cropFilter.cropRegion = self.cropRegion;
@@ -460,7 +465,12 @@ static NSBundle *_resourcesBundle;
     //filters then get plugged into this one
     self.liveEgressMain = self.resizerMain;
     
+    //add the livePreviewView
     [self.view addSubview:self.livePreviewView];
+    
+    //tap to focus view
+    self.tapToFocusView = [TapToFocusView new];
+    [self.view insertSubview:self.tapToFocusView aboveSubview:self.livePreviewView];
     
     /* Controls */
     
@@ -794,7 +804,7 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
 -(void)_handleViewfinderOverlay {
     //add it to the view hierarch if it hasn't already been added
     if (self.isViewLoaded && self.viewfinderOverlay.superview != self.view) {
-        [self.view insertSubview:self.viewfinderOverlay aboveSubview:self.livePreviewView];
+        [self.view insertSubview:self.viewfinderOverlay aboveSubview:self.tapToFocusView];
         
         self.viewfinderOverlay.frame = CGRectMake(self.livePreviewView.frame.origin.x,
                                                   self.view.bounds.origin.y + kCameraViewportPadding.top,
@@ -1189,18 +1199,19 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
 
 -(void)_didTapToFocus:(UITapGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateEnded) {
-        if (self.isTapToFocusEnabled) {
+        if (self.isTapToFocusEnabled && self.state == GBFancyCameraStateCapturing && [self _devicHasCamera]) {
             //find position in view
-            //TODO
+            CGPoint pointInView = CGPointMake(self.livePreviewView.bounds.size.width / 2., self.livePreviewView.bounds.size.height / 2.);//TODO, for now just using the center
+            CGPoint pointInSuperview = [self.tapToFocusView.superview convertPoint:pointInView fromView:self.livePreviewView];
             
             //display visual indicator at point in view
-            //TODO
+            [self.tapToFocusView animateAtPointInSuperview:pointInSuperview];
             
             //find normalised position in camera coordinate
-            //TODO
-            
+            CGPoint pointInCamera = CGPointMake(0.5, 0.5);//TODO for now just using the center
+
             //set focus on the camera
-            [self _setFocusAndExposureAtPoint:CGPointMake(0.5, 0.5)];
+            [self _setFocusAndExposureAtPoint:pointInCamera];
         }
     }
 }

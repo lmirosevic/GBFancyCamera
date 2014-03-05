@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8A00D70D17D9ABDD003DC60C /* GBResizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A00D70C17D9ABDD003DC60C /* GBResizeFilter.m */; };
+		8A17BB0C18C72962008DFB48 /* TapToFocusView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A17BB0A18C72962008DFB48 /* TapToFocusView.h */; };
+		8A17BB0D18C72962008DFB48 /* TapToFocusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A17BB0B18C72962008DFB48 /* TapToFocusView.m */; };
 		8A20018317CFAD1C0046E265 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A20018217CFAD1B0046E265 /* Foundation.framework */; };
 		8A20018817CFAD1C0046E265 /* GBFancyCamera.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8A20018717CFAD1C0046E265 /* GBFancyCamera.h */; };
 		8A20018A17CFAD1C0046E265 /* GBFancyCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A20018917CFAD1C0046E265 /* GBFancyCamera.m */; };
@@ -106,6 +108,8 @@
 		8A00D70B17D9ABDD003DC60C /* GBResizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBResizeFilter.h; sourceTree = "<group>"; };
 		8A00D70C17D9ABDD003DC60C /* GBResizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBResizeFilter.m; sourceTree = "<group>"; };
 		8A00D71017D9ABF2003DC60C /* GBFancyCameraFilters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GBFancyCameraFilters.h; sourceTree = "<group>"; };
+		8A17BB0A18C72962008DFB48 /* TapToFocusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapToFocusView.h; sourceTree = "<group>"; };
+		8A17BB0B18C72962008DFB48 /* TapToFocusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapToFocusView.m; sourceTree = "<group>"; };
 		8A20017F17CFAD1B0046E265 /* libGBFancyCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGBFancyCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A20018217CFAD1B0046E265 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8A20018617CFAD1C0046E265 /* GBFancyCamera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GBFancyCamera-Prefix.pch"; sourceTree = "<group>"; };
@@ -271,6 +275,8 @@
 				8A20018917CFAD1C0046E265 /* GBFancyCamera.m */,
 				8A72428017D9DEED00071E46 /* GBFancyCameraFilterProtocol.h */,
 				8A00D71017D9ABF2003DC60C /* GBFancyCameraFilters.h */,
+				8A17BB0A18C72962008DFB48 /* TapToFocusView.h */,
+				8A17BB0B18C72962008DFB48 /* TapToFocusView.m */,
 				8A72436317DA3F3C00071E46 /* UIImage+GBFancyCamera.h */,
 				8A72436417DA3F3D00071E46 /* UIImage+GBFancyCamera.m */,
 				8AF650FB17DCB5A500E6134F /* Filters */,
@@ -386,6 +392,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A17BB0C18C72962008DFB48 /* TapToFocusView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A20018A17CFAD1C0046E265 /* GBFancyCamera.m in Sources */,
+				8A17BB0D18C72962008DFB48 /* TapToFocusView.m in Sources */,
 				8A00D70D17D9ABDD003DC60C /* GBResizeFilter.m in Sources */,
 				8A72428517D9DFCA00071E46 /* GBMissEtikateFilter.m in Sources */,
 				8A72428817D9E02500071E46 /* GBAmatorkaFilter.m in Sources */,
