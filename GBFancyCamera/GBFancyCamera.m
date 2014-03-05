@@ -23,7 +23,11 @@
 //view imports
 #import "TapToFocusView.h"
 
-static CGFloat const kCameraAspectRatio =                           16./9.;
+//for identifying device
+#import <sys/utsname.h>
+
+static CGFloat const kCameraAspectRatio3G =                         4./3.;
+static CGFloat const kCameraAspectRatio4Plus =                      16./9.;
 
 static CGFloat const kBottomBarHeight =                             53;
 static CGFloat const kBottomBarBottomMargin =                       0;
@@ -378,7 +382,7 @@ typedef enum {
 
 -(GBResizeFilter *)resizerMain {
     if (!_resizerMain) {
-        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:[self _maxOutputImageResolutionBeforeCropping] aspectRatio:kCameraAspectRatio];
+        _resizerMain = [[GBResizeFilter alloc] initWithOutputResolution:[self _maxOutputImageResolutionBeforeCropping] aspectRatio:[self.class cameraAspectRatio]];
     }
     
     return _resizerMain;
@@ -686,7 +690,16 @@ static NSBundle *_resourcesBundle;
 #pragma mark - API
 
 +(CGFloat)cameraAspectRatio {
-    return kCameraAspectRatio;
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString *machineName = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+
+    if ([machineName isEqualToString:@"iPhone1,2"] || [machineName isEqualToString:@"iPhone2,1"]) {
+        return kCameraAspectRatio3G;
+    }
+    else {
+        return kCameraAspectRatio4Plus;
+    }
 }
 
 -(void)takePhotoWithBlock:(GBFancyCameraCompletionBlock)block {
