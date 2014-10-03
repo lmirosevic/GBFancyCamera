@@ -845,7 +845,7 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
 }
 
 -(void)_acceptPhoto {
-    self.processedImage = [self.currentFilter imageFromCurrentlyProcessedOutput];
+    self.processedImage = [self.currentFilter imageFromCurrentFramebuffer];
     [self _returnControlSuccessfulCapture:YES];
     [self _cleanupHeavyStuff];
 }
@@ -862,7 +862,6 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
         
         //camera capture
         [self.stillCamera pauseCameraCapture];
-        [self.stillCamera prepareForImageCapture];
         
         //take photo
         [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
@@ -974,7 +973,6 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
     [self.imagePic addTarget:self.cropFilter];
     [self.cropFilter addTarget:filterObject];
     [filterObject addTarget:self.livePreviewView];
-    [filterObject prepareForImageCapture];
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
     
     [self.imagePic processImage];

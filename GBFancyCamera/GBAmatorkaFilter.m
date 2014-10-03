@@ -47,11 +47,6 @@
     return self;
 }
 
--(void)prepareForImageCapture {
-    [lookupImageSource processImage];
-    [super prepareForImageCapture];
-}
-
 #pragma mark - GBFancyCameraFilterProtocol
 
 -(NSString *)localisedName {
