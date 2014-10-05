@@ -845,7 +845,19 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
 }
 
 -(void)_acceptPhoto {
-    self.processedImage = [self.currentFilter imageFromCurrentlyProcessedOutput];
+    GPUImagePicture *stillImageSource = [[GPUImagePicture alloc] initWithImage:self.originalImage];
+
+    //create a new filter object because the other one is already hooked up and in use for the preview
+    GPUImageOutput<GBFancyCameraFilterProtocol, GPUImageInput> *filterObject = [self.currentFilter.class new];
+    
+    [stillImageSource addTarget:filterObject];
+    
+    [filterObject useNextFrameForImageCapture];
+    [stillImageSource processImage];
+    UIImage *filteredImage = [filterObject imageFromCurrentFramebuffer];
+
+    self.processedImage = filteredImage;
+    
     [self _returnControlSuccessfulCapture:YES];
     [self _cleanupHeavyStuff];
 }
@@ -860,13 +872,10 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
     if ([self _devicHasCamera]) {
         self.mainButton.enabled = NO;
         
-        //camera capture
-        [self.stillCamera pauseCameraCapture];
-        [self.stillCamera prepareForImageCapture];
-        
         //take photo
         [self.stillCamera capturePhotoAsImageProcessedUpToFilter:self.liveEgressMain withCompletionHandler:^(UIImage *processedImage, NSError *error) {
             UIImage *rotatedImage = [processedImage rotateInRadians:[self _rotationAngleForCurrentDeviceOrientation]];
+            
             [self _obtainedNewImage:rotatedImage fromSource:GBFancyCameraSourceCamera];
             
             self.mainButton.enabled = YES;
@@ -974,7 +983,6 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
     [self.imagePic addTarget:self.cropFilter];
     [self.cropFilter addTarget:filterObject];
     [filterObject addTarget:self.livePreviewView];
-    [filterObject prepareForImageCapture];
     self.livePreviewView.fillMode = kGPUImageFillModePreserveAspectRatio;
     
     [self.imagePic processImage];
@@ -1026,75 +1034,81 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
         //do the animation to move around buttons and stuff
         NSTimeInterval duration = animated ? kStateTransitionAnimationDuration : 0;
         switch (state) {
-                case GBFancyCameraStateCapturing: {
-                    //rotate button back to device orientation
-                    self.mainButton.transform = CGAffineTransformMakeRotation([self _rotationAngleForCurrentDeviceOrientation]);
-                    
-                    //animations
-                    [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-                        //viewport
-                        [self _setLivePreviewFrameWhenShowingBottomBar:NO];
-                        
-                        //main button
-                        [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-camera")] forState:UIControlStateNormal];
-                        self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
-                                                           (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
-                                                           self.mainButton.frame.size.width,
-                                                           self.mainButton.frame.size.height);
-                        
-                        //retake button
-                        self.retakeButton.alpha = 0;
-                        
-                        //camera roll button
-                        self.cameraRollButton.alpha = 1;
-                        
-                        //filters
-                        [self _setFiltersFrameToShowFilters:NO];
-                        
-                        //heading
-                        self.barHeadingLabel.alpha = 0;
-                    } completion:nil];
-                } break;
+            case GBFancyCameraStateCapturing: {
+                //resume capturing
+                [self.stillCamera resumeCameraCapture];
                 
-                case GBFancyCameraStateFilters: {
-                    //rotate button to defailt
-                    self.mainButton.transform = CGAffineTransformIdentity;
+                //rotate button back to device orientation
+                self.mainButton.transform = CGAffineTransformMakeRotation([self _rotationAngleForCurrentDeviceOrientation]);
+                
+                //animations
+                [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //viewport
+                    [self _setLivePreviewFrameWhenShowingBottomBar:NO];
                     
-                    //animations
-                    [UIView animateWithDuration:duration delay:0 options:0 animations:^{
-                        //viewport
-                        [self _setLivePreviewFrameWhenShowingBottomBar:[self _areFiltersEnabled]];
-                        
-                        //main button
-                        [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-tick")] forState:UIControlStateNormal];
-                        self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
-                                                           (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
-                                                           self.mainButton.frame.size.width,
-                                                           self.mainButton.frame.size.height);
-                        
-                        //retake button
-                        self.retakeButton.alpha = 1;
-                        
-                        //camera roll button
-                        self.cameraRollButton.alpha = 0;
-                        
-                        //filters
-                        [self _setFiltersFrameToShowFilters:[self _areFiltersEnabled]];
-                        
-                        //heading
-                        NSString *barHeadingText;
-                        
-                        if ([self _areFiltersEnabled]) {
-                            barHeadingText = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
-                        }
-                        else {
-                            barHeadingText = NSLocalizedStringFromTableInBundle(@"Preview", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"preview state heading");
-                        }
-                        
-                        self.barHeadingLabel.text = barHeadingText;
-                        self.barHeadingLabel.alpha = 1;
-                    } completion:nil];
-                } break;
+                    //main button
+                    [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-camera")] forState:UIControlStateNormal];
+                    self.mainButton.frame = CGRectMake((self.barContainerView.bounds.size.width - self.mainButton.frame.size.width) / 2,
+                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
+                                                       self.mainButton.frame.size.width,
+                                                       self.mainButton.frame.size.height);
+                    
+                    //retake button
+                    self.retakeButton.alpha = 0;
+                    
+                    //camera roll button
+                    self.cameraRollButton.alpha = 1;
+                    
+                    //filters
+                    [self _setFiltersFrameToShowFilters:NO];
+                    
+                    //heading
+                    self.barHeadingLabel.alpha = 0;
+                } completion:nil];
+            } break;
+            
+            case GBFancyCameraStateFilters: {
+                //pause capturing
+                [self.stillCamera pauseCameraCapture];
+                
+                //rotate button to defailt
+                self.mainButton.transform = CGAffineTransformIdentity;
+                
+                //animations
+                [UIView animateWithDuration:duration delay:0 options:0 animations:^{
+                    //viewport
+                    [self _setLivePreviewFrameWhenShowingBottomBar:[self _areFiltersEnabled]];
+                    
+                    //main button
+                    [self.mainButton setImage:[UIImage imageNamed:BundledResource(@"fancy-camera-snap-button-icon-tick")] forState:UIControlStateNormal];
+                    self.mainButton.frame = CGRectMake(self.barContainerView.bounds.size.width - (kMainButtonAcceptModeRightCenterMargin + self.mainButton.frame.size.width / 2),
+                                                       (self.barContainerView.bounds.size.height - self.mainButton.frame.size.height) / 2 + kMainButtonCenterOffset,
+                                                       self.mainButton.frame.size.width,
+                                                       self.mainButton.frame.size.height);
+                    
+                    //retake button
+                    self.retakeButton.alpha = 1;
+                    
+                    //camera roll button
+                    self.cameraRollButton.alpha = 0;
+                    
+                    //filters
+                    [self _setFiltersFrameToShowFilters:[self _areFiltersEnabled]];
+                    
+                    //heading
+                    NSString *barHeadingText;
+                    
+                    if ([self _areFiltersEnabled]) {
+                        barHeadingText = NSLocalizedStringFromTableInBundle(@"Filters", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"filters state heading");
+                    }
+                    else {
+                        barHeadingText = NSLocalizedStringFromTableInBundle(@"Preview", @"GBFancyCameraLocalizations", self.class.resourcesBundle, @"preview state heading");
+                    }
+                    
+                    self.barHeadingLabel.text = barHeadingText;
+                    self.barHeadingLabel.alpha = 1;
+                } completion:nil];
+            } break;
         }
         
         //remember state

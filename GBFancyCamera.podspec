@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "GBFancyCamera"
-  s.version      = "2.2.0"
+  s.version      = "2.2.1"
   s.summary      = "A blocks based class for getting images from the camera and camera roll, with preview, customisable UI and pluggable filters."
   s.homepage     = "https://github.com/lmirosevic/GBFancyCamera"
   s.license      = 'Apache License, Version 2.0'
@@ -13,5 +13,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'GBMotion'
-  s.dependency 'GPUImage-Goonbee'
+  s.dependency 'GPUImage-Goonbee', '~> 0.1'
 end
