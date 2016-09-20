@@ -1287,15 +1287,15 @@ static UIViewController * TopmostViewControllerWithRootViewController(UIViewCont
 #pragma mark - App resign/restore active hooks
 
 -(void)applicationWillResignActive {
-    self.wasCapturingBeforeResignActive = self.stillCamera.isCapturing;
+    self.wasCapturingBeforeResignActive = self.stillCamera.captureSession.isRunning;
     
-    if (self.stillCamera.isCapturing) {
+    if (self.stillCamera.captureSession.isRunning) {
         [self.stillCamera pauseCameraCapture];
     }
 }
 
 -(void)applicationDidBecomeActive {
-    if (self.wasCapturingBeforeResignActive && !self.stillCamera.isCapturing) {
+    if (self.wasCapturingBeforeResignActive && !self.stillCamera.captureSession.isRunning) {
         [self.stillCamera resumeCameraCapture];
     }
 }
